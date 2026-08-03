@@ -3,27 +3,58 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class SensoryProfile(BaseModel):
+    """Quantitative sensory dimensions on 1-10 scales; not a clinical assessment."""
+
+    model_config = ConfigDict(extra="forbid")
+
     auditory_sensitivity: int = Field(ge=1, le=10)
     sensory_seeking: int = Field(ge=1, le=10)
     change_sensitivity: int = Field(ge=1, le=10)
 
 
+class SupportProfile(BaseModel):
+    """Qualitative multidimensional support needs.
+
+    Support is modelled as several named dimensions. A single
+    high/medium/low functioning-level field is deliberately excluded, and
+    ``extra='forbid'`` prevents one from being introduced.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    communication: str = Field(min_length=1)
+    sensory: str = Field(min_length=1)
+    routine: str = Field(min_length=1)
+    social: str = Field(min_length=1)
+
+
 class Persona(BaseModel):
+    """A fictional, explicitly synthetic autistic-persona profile.
+
+    Neurodiversity safeguards: ``synthetic`` is locked to ``True``; support is
+    multidimensional (SupportProfile plus named behavioural lists); and
+    ``extra='forbid'`` rejects any undeclared field, so a single
+    functioning-level label cannot be introduced. Every persona is fictional
+    and is not representative of the autistic population.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
     persona_id: str
-    display_name: str
+    display_name: str = Field(min_length=1)
     age_years: int = Field(ge=4, le=18)
     synthetic: Literal[True] = True
-    profile_summary: str
-    support_profile: dict[str, str]
+    profile_summary: str = Field(min_length=1)
+    support_profile: SupportProfile
     sensory_profile: SensoryProfile
-    communication_modes: list[str]
-    music_preferences: list[str]
-    known_triggers: list[str]
-    preferred_supports: list[str]
+    communication_modes: list[str] = Field(min_length=1)
+    music_preferences: list[str] = Field(min_length=1)
+    known_triggers: list[str] = Field(min_length=1)
+    preferred_supports: list[str] = Field(min_length=1)
 
     @field_validator("persona_id")
     @classmethod

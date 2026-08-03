@@ -47,3 +47,15 @@ For every session, append:
 - Errors or rejected suggestions: None. Limitation noted: a non-systematic student review can miss evidence and cannot support clinical claims; exact figures must be verified before public release.
 - Evidence path: `evidence/S02/summary.md`, `evidence/S02/check_outputs.txt`.
 - Mentor acceptance or required revision: Awaiting mentor acceptance; S03 not started.
+
+## S03 — Persona Schema and Neurodiversity Safeguards — 2026-08-03
+
+- Unit ID and date: S03, 2026-08-03 (code).
+- Student's intended change: Finalize the multidimensional persona schema and validate the five fictional profiles without a single functioning-level label.
+- AI assistance used: Claude Code (CLI) — checked dependencies, hardened `models.py`, expanded `tests/test_models.py`, wrote `docs/persona_design.md`, ran checks.
+- Files changed: `src/ai_music_therapy/models.py` (new `SupportProfile`; `extra="forbid"`; non-empty fields), `tests/test_models.py` (6 new safeguard tests), `docs/persona_design.md` (new). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D009), and this log. `data/public/synthetic_personas.json` unchanged (already schema-compliant).
+- Tests/checks run and actual results: smoke_test PASS; pytest 10 passed (4 baseline + 6 new); test_models.py 7/7; `git diff --check` clean; safeguard spot-check (5 personas, all synthetic, all five dimensions) PASS; secret/clinical-claim scan clean. ruff: 26 pre-existing errors, 0 introduced by S03.
+- Student explanation of one key decision: Enforce multidimensionality and reject a functioning-level label at the schema level (`extra="forbid"` + required named dimensions + non-empty fields), so the safeguard is structural and testable rather than relying on convention.
+- Errors or rejected suggestions: None. Limitation noted: schema enforces structure, not meaning — stereotype/representation risk remains and is documented.
+- Evidence path: `evidence/S03/summary.md`, `evidence/S03/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S04 not started.
