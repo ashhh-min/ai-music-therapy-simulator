@@ -1,0 +1,185 @@
+[
+  {
+    "persona_id": "P-LILY",
+    "display_name": "Lily",
+    "age_years": 7,
+    "synthetic": true,
+    "profile_summary": "Uses fluent speech and may become anxious around sharp, high-frequency sounds.",
+    "support_profile": {
+      "communication": "Fluent speech; clearly states discomfort.",
+      "sensory": "High auditory sensitivity, especially to sharp high-frequency sounds.",
+      "routine": "Benefits from advance warning and predictable transitions.",
+      "social": "May participate well when the sensory environment feels safe."
+    },
+    "sensory_profile": {
+      "auditory_sensitivity": 9,
+      "sensory_seeking": 2,
+      "change_sensitivity": 7
+    },
+    "communication_modes": [
+      "spoken language"
+    ],
+    "music_preferences": [
+      "low-volume piano",
+      "slow instrumental",
+      "low-frequency textures"
+    ],
+    "known_triggers": [
+      "sudden volume increase",
+      "bright metallic timbre",
+      "unexpected transition"
+    ],
+    "preferred_supports": [
+      "volume preview",
+      "gradual fade-in",
+      "stop control"
+    ]
+  },
+  {
+    "persona_id": "P-MAX",
+    "display_name": "Max",
+    "age_years": 9,
+    "synthetic": true,
+    "profile_summary": "Seeks rhythmic and tactile stimulation and communicates with short phrases and gestures.",
+    "support_profile": {
+      "communication": "Short phrases and gestures.",
+      "sensory": "Often seeks rhythmic auditory and tactile input.",
+      "routine": "Can tolerate variation when a beat remains predictable.",
+      "social": "May join through imitation and shared rhythm."
+    },
+    "sensory_profile": {
+      "auditory_sensitivity": 4,
+      "sensory_seeking": 9,
+      "change_sensitivity": 4
+    },
+    "communication_modes": [
+      "short spoken phrases",
+      "gestures"
+    ],
+    "music_preferences": [
+      "steady percussion",
+      "clear pulse",
+      "moderate tempo"
+    ],
+    "known_triggers": [
+      "unstructured noise",
+      "long silent pauses"
+    ],
+    "preferred_supports": [
+      "visible beat cue",
+      "choice of percussion",
+      "movement break"
+    ]
+  },
+  {
+    "persona_id": "P-EMMA",
+    "display_name": "Emma",
+    "age_years": 6,
+    "synthetic": true,
+    "profile_summary": "Uses picture-based communication and may respond more to instrumental patterns than spoken prompts.",
+    "support_profile": {
+      "communication": "Picture-based and non-speaking communication.",
+      "sensory": "Variable response to voice; may orient to simple instrumental patterns.",
+      "routine": "Benefits from short, repeated sequences.",
+      "social": "Engagement may be visible through gaze, posture, or repeated movement."
+    },
+    "sensory_profile": {
+      "auditory_sensitivity": 6,
+      "sensory_seeking": 5,
+      "change_sensitivity": 8
+    },
+    "communication_modes": [
+      "picture exchange",
+      "body movement",
+      "gaze"
+    ],
+    "music_preferences": [
+      "simple instrumental motifs",
+      "gentle repetition",
+      "short duration"
+    ],
+    "known_triggers": [
+      "dense vocal layers",
+      "rapid unpredictable changes"
+    ],
+    "preferred_supports": [
+      "visual choice board",
+      "short trial",
+      "repetition"
+    ]
+  },
+  {
+    "persona_id": "P-RYAN",
+    "display_name": "Ryan",
+    "age_years": 10,
+    "synthetic": true,
+    "profile_summary": "Uses fluent speech, has strong interests, and prefers repeated, predictable musical structure.",
+    "support_profile": {
+      "communication": "Fluent speech, often centered on preferred interests.",
+      "sensory": "Moderate auditory sensitivity.",
+      "routine": "High preference for repetition and predictable form.",
+      "social": "May engage through discussing patterns or structure."
+    },
+    "sensory_profile": {
+      "auditory_sensitivity": 5,
+      "sensory_seeking": 4,
+      "change_sensitivity": 9
+    },
+    "communication_modes": [
+      "spoken language"
+    ],
+    "music_preferences": [
+      "repeating motifs",
+      "clear formal structure",
+      "familiar instrumentation"
+    ],
+    "known_triggers": [
+      "abrupt key change",
+      "unexpected ending",
+      "unannounced switch"
+    ],
+    "preferred_supports": [
+      "preview structure",
+      "repeat control",
+      "countdown before change"
+    ]
+  },
+  {
+    "persona_id": "P-ZOE",
+    "display_name": "Zoe",
+    "age_years": 8,
+    "synthetic": true,
+    "profile_summary": "Communicates with short words and emotion signals and may need gradual recovery after overload.",
+    "support_profile": {
+      "communication": "Short words, facial expression, and visible emotion signals.",
+      "sensory": "High sensitivity to volume and dense texture.",
+      "routine": "Benefits from slow transitions and recovery time.",
+      "social": "May re-engage after co-regulation and reduced stimulation."
+    },
+    "sensory_profile": {
+      "auditory_sensitivity": 8,
+      "sensory_seeking": 3,
+      "change_sensitivity": 7
+    },
+    "communication_modes": [
+      "single words",
+      "facial expression",
+      "movement"
+    ],
+    "music_preferences": [
+      "soft sustained tones",
+      "slow tempo",
+      "low density"
+    ],
+    "known_triggers": [
+      "high volume",
+      "dense percussion",
+      "fast escalation"
+    ],
+    "preferred_supports": [
+      "very low starting volume",
+      "gradual progression",
+      "quiet exit"
+    ]
+  }
+]

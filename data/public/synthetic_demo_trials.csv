@@ -1,0 +1,6 @@
+trial_id,persona_id,scene,genre,bpm,volume,instrument,tonality,duration_sec,engine,anxiety_level,engagement_level,mood_score,regulation_score,attention_duration_sec,fixture_label
+DEMO-001,P-LILY,sleep_support,instrumental,50,low,piano,major,180,deterministic,3,5,7,7,140,synthetic UI fixture
+DEMO-002,P-MAX,focus_support,instrumental,92,medium,percussion,major,180,deterministic,4,9,8,7,260,synthetic UI fixture
+DEMO-003,P-EMMA,engagement_support,instrumental,68,low,piano,major,60,deterministic,4,6,6,6,75,synthetic UI fixture
+DEMO-004,P-RYAN,focus_support,instrumental,84,medium,synth,minor,180,deterministic,6,6,5,5,180,synthetic UI fixture
+DEMO-005,P-ZOE,regulation_support,nature,54,low,mixed,atonal,180,deterministic,3,4,7,8,125,synthetic UI fixture
