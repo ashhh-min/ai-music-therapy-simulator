@@ -2,7 +2,9 @@
 
 An evidence-first educational research prototype based on the original **AI Music Therapy** proposal. The system lets a student define synthetic autistic-persona profiles, specify music parameters and support scenarios, run reproducible hypothesis simulations, and analyze the resulting synthetic outputs.
 
-> **Not a clinical tool.** Outputs are model-generated hypotheses for learning and software research. They do not predict an autistic child's response, diagnose anyone, prescribe treatment, or establish therapeutic effectiveness.
+> **User-visible disclaimer (frozen at S01).** This is an educational software prototype. All personas and outputs are fictional and explicitly synthetic. The system generates structured *synthetic response hypotheses* from configured persona profiles and music parameters. Outputs do not predict any real autistic child's response, do not diagnose autism or any other condition, do not recommend or constitute treatment, and do not establish therapeutic effectiveness. Treat every result as a demonstration of software behavior and prompt/model sensitivity, not as clinical evidence.
+
+**Frozen research question (S01):** how do synthetic, multidimensional autistic-persona profiles and configured music parameters produce differing synthetic response hypotheses under a deterministic reference engine and an optional OpenAI structured-output engine, and what does the variation across a fixed 5-persona × 5-scenario × 3-variant (75-cell) matrix reveal about software behavior and prompt/model sensitivity — without any clinical claim? The full frozen scope, deliverables, exclusions, and success criteria are in `docs/AuthoritativePlan.md`.
 
 ## Prepared starter route
 

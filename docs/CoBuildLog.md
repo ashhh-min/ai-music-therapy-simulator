@@ -23,3 +23,15 @@ For every session, append:
 - Errors or rejected suggestions: None. Non-blocking observations recorded (TOML reference-only; `gpt-5.6-terra` placeholder model; system python 3.9.6 too old -> used Python 3.13.14 venv).
 - Evidence path: `evidence/WORKSPACE_AUDIT/audit_report.md`, `evidence/WORKSPACE_AUDIT/check_outputs.txt`.
 - Mentor acceptance or required revision: Awaiting mentor acceptance; S01 not started.
+
+## S01 — Project Scope and Claims Boundary — 2026-08-03
+
+- Unit ID and date: S01, 2026-08-03 (documentation-only).
+- Student's intended change: Freeze the research question, user-visible disclaimer, in-scope deliverables, exclusions, and success criteria.
+- AI assistance used: Claude Code (CLI) — ran prior-state baseline checks, edited three docs, validated references, and re-ran checks.
+- Files changed: `docs/AuthoritativePlan.md` (research question + freeze markers + success criteria), `docs/ResearchEthics.md` (canonical user-visible disclaimer), `README.md` (user-visible disclaimer + one-line research question). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D007), and this log.
+- Tests/checks run and actual results: smoke_test PASS; pytest 4 passed (baseline preserved); `git diff --check` clean; doc reference validation all OK; claims/secret scan clean (no positive clinical claims, no secrets; synthetic labelling reinforced).
+- Student explanation of one key decision: Freeze scope in version-controlled docs and surface the disclaimer in the README so every later unit implements against a fixed, user-visible boundary.
+- Errors or rejected suggestions: None. Limitation noted: the freeze is prose-level; enforcing the claims boundary and synthetic labelling as code/tests is deferred to a later unit (D007).
+- Evidence path: `evidence/S01/summary.md`, `evidence/S01/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S02 not started.

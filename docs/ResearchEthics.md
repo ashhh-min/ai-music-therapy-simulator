@@ -4,6 +4,12 @@
 
 This is a software-and-methods project that studies **model behavior under controlled synthetic inputs**. It is not research on autistic children and not a substitute for clinical or participatory autism research.
 
+## User-visible disclaimer (frozen at S01 — 2026-08-03)
+
+This is the canonical disclaimer surfaced to users. It must not be weakened, and no public output may contradict it.
+
+> This is an educational software prototype. All personas and outputs are fictional and explicitly synthetic. The system generates structured *synthetic response hypotheses* from configured persona profiles and music parameters. Outputs do not predict any real autistic child's response, do not diagnose autism or any other condition, do not recommend or constitute treatment, and do not establish therapeutic effectiveness. Treat every result as a demonstration of software behavior and prompt/model sensitivity, not as clinical evidence.
+
 ## Ethical principles
 
 - Respect: use non-stigmatizing language and make synthetic status visible.

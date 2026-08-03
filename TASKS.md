@@ -15,22 +15,23 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: WORKSPACE_AUDIT
-Unit focus: Verify the prepared starter without implementing S01.
-Current prompt: `prompts/WORKSPACE_AUDIT.md`
-Status: Complete on 2026-08-03. Acceptance criteria met; awaiting mentor acceptance. S01 is NOT yet started and must be activated only after acceptance.
-Acceptance evidence: `evidence/WORKSPACE_AUDIT/audit_report.md`, `evidence/WORKSPACE_AUDIT/check_outputs.txt`; versions recorded in `docs/EnvironmentRecord.md`.
+Unit code: S01
+Unit focus: Project Scope and Claims Boundary (documentation-only freeze).
+Current prompt: `prompts/Session_01_Project_Scope_and_Claims_Boundary.md`
+Status: Complete on 2026-08-03. Acceptance criteria met; awaiting mentor acceptance. S02 is NOT yet started and must be activated only after acceptance.
+Acceptance evidence: `evidence/S01/summary.md`, `evidence/S01/check_outputs.txt`.
+Pre-unit checkpoint: 15856bb.
 
 ## Acceptance Criteria for Current Unit
-- Repository tree and control files are inspected.
-- Actual environment versions are recorded without invention.
-- Secret/private-data/configuration scans pass or blockers are documented.
-- Import smoke test runs; no feature unit is implemented.
+- Baseline persona → music → synthetic response → analysis loop remains recognizable.
+- Every public claim distinguishes synthetic software behavior from clinical evidence.
+- No implementation beyond bounded documentation changes (research question, disclaimer, deliverables, exclusions, success criteria frozen).
+- Changed docs validated; baseline checks (smoke + pytest) still pass.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
-- [x] WORKSPACE_AUDIT - One-time audit (complete 2026-08-03; awaiting acceptance)
-- [ ] S01 - Project scope and claims boundary
+- [x] WORKSPACE_AUDIT - One-time audit (complete 2026-08-03; accepted)
+- [x] S01 - Project scope and claims boundary (complete 2026-08-03; awaiting acceptance)
 - [ ] S02 - Evidence review protocol and bibliography
 - [ ] S03 - Persona schema and neurodiversity safeguards
 - [ ] S04 - Music parameter ontology and scenario rubric
@@ -56,12 +57,13 @@ Acceptance evidence: `evidence/WORKSPACE_AUDIT/audit_report.md`, `evidence/WORKS
   - Setup note (resolved): the system `python3` is 3.9.6, below `requires-python = ">=3.11"`. A `.venv` was created from Python 3.13.14 (conda env `vibe-ash`) and the package installed successfully. Future setups must use a Python 3.11+ interpreter.
 
 ## Last Test Evidence
-- Package import: PASS on 2026-08-03 (all 8 modules; `__version__ = 0.1.0`) under `.venv` Python 3.13.14.
-- Unit tests: Not run this unit (out of audit scope); smoke test used instead.
-- Streamlit UI: Not run this unit (out of audit scope).
-- Manual demo path: Not run this unit (out of audit scope).
+- Unit: S01 (documentation-only; no code changed).
 - Smoke test (`python scripts/smoke_test.py`): PASS — five validated synthetic personas.
-- Config parse (TOML/JSON) and public fixture validation: PASS. Raw output in `evidence/WORKSPACE_AUDIT/check_outputs.txt`.
+- pytest: 4 passed (baseline preserved).
+- `git diff --check`: clean.
+- Documentation reference validation: all referenced files exist.
+- Claims/secret scan on changed docs: no positive clinical claims, no secrets; synthetic labelling reinforced.
+- Raw output: `evidence/S01/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -69,6 +71,7 @@ Acceptance evidence: `evidence/WORKSPACE_AUDIT/audit_report.md`, `evidence/WORKS
 - AI mode is optional, uses environment configuration, and stores no API response by default.
 - A single functioning-level label is excluded; support profiles are multidimensional.
 - Audit environment: project runs under a Python 3.11+ `.venv` (system python 3.9.6 is too old); added `*.egg-info/` to `.gitignore` to keep build artifacts out of version control (see D006).
+- S01 scope freeze (see D007): research question, user-visible disclaimer, in-scope deliverables, exclusions, and success criteria are frozen in `docs/AuthoritativePlan.md`, `docs/ResearchEthics.md`, and `README.md`; later units implement against this fixed boundary.
 
 ## Next Unit Preparation
-After the workspace audit is accepted, activate S01 only. Do not begin S02 or implementation work early.
+After S01 is accepted, activate S02 (Evidence Review Protocol and Bibliography) only. Do not begin S02 or any implementation work early.
