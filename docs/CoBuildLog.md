@@ -35,3 +35,15 @@ For every session, append:
 - Errors or rejected suggestions: None. Limitation noted: the freeze is prose-level; enforcing the claims boundary and synthetic labelling as code/tests is deferred to a later unit (D007).
 - Evidence path: `evidence/S01/summary.md`, `evidence/S01/check_outputs.txt`.
 - Mentor acceptance or required revision: Awaiting mentor acceptance; S02 not started.
+
+## S02 — Evidence Review Protocol and Bibliography — 2026-08-03
+
+- Unit ID and date: S02, 2026-08-03 (documentation-only).
+- Student's intended change: Create the evidence table, literature search log, claim ledger, and minimum authoritative bibliography.
+- AI assistance used: Claude Code (CLI) — ran baseline checks, generated the CSV via Python's csv module, wrote the claim ledger, updated the protocol, and validated.
+- Files changed: `docs/evidence_table.csv` (new, 8 sources), `docs/claim_ledger.md` (new, 8 claims), `docs/LiteratureReviewProtocol.md` (extraction-table pointer + search log). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D008), and this log.
+- Tests/checks run and actual results: CSV parses (8 sources, required columns non-empty); claim-ledger cross-reference PASS; smoke_test PASS; pytest 4 passed; `git diff --check` clean; no-invention scan PASS (0 secrets, 0 fabricated DOIs/stats, 0 positive clinical claims).
+- Student explanation of one key decision: Log only real sources already named in the project references/protocol, and mark unverified figures as "verify before public release" so the no-invention rule is honored literally.
+- Errors or rejected suggestions: None. Limitation noted: a non-systematic student review can miss evidence and cannot support clinical claims; exact figures must be verified before public release.
+- Evidence path: `evidence/S02/summary.md`, `evidence/S02/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S03 not started.
