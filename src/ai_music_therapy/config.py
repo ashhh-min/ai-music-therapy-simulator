@@ -6,7 +6,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+# Load shared defaults (.env) then a local override (.env.local, gitignored).
+# Real credentials belong in .env.local, which is never committed.
 load_dotenv()
+load_dotenv(".env.local", override=True)
 
 
 @dataclass(frozen=True)
