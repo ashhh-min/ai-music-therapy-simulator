@@ -1,0 +1,113 @@
+{
+  "ontology_version": "2026-08-01.v1",
+  "synthetic_status": "All music parameters and scenarios are simulated inputs to a synthetic educational model. They describe software configuration, not a delivered clinical intervention, and do not establish therapeutic effectiveness.",
+  "enforced_by": "The Pydantic schema in src/ai_music_therapy/models.py (MusicParameters, TrialRecord) is the runtime-enforced source of truth for these allowed values; this file is the human- and machine-readable declaration, kept consistent by tests/test_models.py.",
+  "music_parameters": {
+    "genre": {
+      "allowed": ["classical", "popular", "nature", "instrumental", "vocal"],
+      "description": "Broad musical character of the simulated stimulus."
+    },
+    "bpm": {
+      "min": 40,
+      "max": 120,
+      "unit": "beats per minute",
+      "description": "Simulated tempo; bounded to a calm-to-moderate range for this educational model."
+    },
+    "volume": {
+      "allowed": ["low", "medium", "high"],
+      "description": "Ordinal simulated loudness; 'high' triggers an explicit caution flag."
+    },
+    "instrument": {
+      "allowed": ["piano", "guitar", "percussion", "synth", "voice", "mixed"],
+      "description": "Primary simulated timbre or texture."
+    },
+    "tonality": {
+      "allowed": ["major", "minor", "atonal"],
+      "description": "Simulated pitch organization; 'atonal' can increase the simulated abruptness signal."
+    },
+    "duration_sec": {
+      "min": 60,
+      "max": 300,
+      "unit": "seconds",
+      "description": "Simulated trial length (1 to 5 minutes)."
+    },
+    "lyrics_language": {
+      "allowed": ["none", "english", "chinese"],
+      "default": "none",
+      "description": "Whether simulated lyrics are present and their language; non-'none' adds a simulated cognitive-load signal."
+    }
+  },
+  "scenarios": [
+    {
+      "id": "sleep_support",
+      "label": "Sleep support",
+      "outcome_focus": ["anxiety_level", "regulation_score", "mood_score"],
+      "favorable_direction": "lower simulated anxiety and higher simulated regulation/mood.",
+      "rubric": "A favorable software outcome is lower simulated anxiety together with higher simulated regulation and mood across the start/middle/end stages. This is a descriptive software rubric, not a sleep-quality or clinical measure.",
+      "stop_conditions": [
+        "If simulated anxiety_level >= 8, display the high-simulated-distress stop-condition flag and offer a stop control.",
+        "If volume is 'high', display the explicit high-volume caution flag."
+      ],
+      "clinical_note": "Software outcome only; not a validated measure of sleep and not a treatment for sleep disturbance."
+    },
+    {
+      "id": "anxiety_support",
+      "label": "Anxiety support",
+      "outcome_focus": ["anxiety_level", "regulation_score", "mood_score"],
+      "favorable_direction": "lower simulated anxiety and higher simulated regulation/mood.",
+      "rubric": "A favorable software outcome is a reduction in simulated anxiety with stable or improved regulation and mood. The rubric reads model-generated signals only; it does not measure real anxiety.",
+      "stop_conditions": [
+        "If simulated anxiety_level >= 8, display the high-simulated-distress stop-condition flag and offer a stop control.",
+        "If volume is 'high', display the explicit high-volume caution flag."
+      ],
+      "clinical_note": "Software outcome only; not a validated anxiety measure and not an anxiety treatment."
+    },
+    {
+      "id": "focus_support",
+      "label": "Focus support",
+      "outcome_focus": ["engagement_level", "attention_duration_sec", "regulation_score"],
+      "favorable_direction": "higher simulated engagement and longer simulated attention.",
+      "rubric": "A favorable software outcome is higher simulated engagement and longer simulated attention alongside adequate regulation. This describes simulated attention to a stimulus, not a clinical measure of attention.",
+      "stop_conditions": [
+        "If simulated anxiety_level >= 8, display the high-simulated-distress stop-condition flag and offer a stop control.",
+        "If volume is 'high', display the explicit high-volume caution flag."
+      ],
+      "clinical_note": "Software outcome only; not a validated measure of attention or focus and not a treatment for attention-related conditions."
+    },
+    {
+      "id": "engagement_support",
+      "label": "Engagement support",
+      "outcome_focus": ["engagement_level", "mood_score", "communication_observations"],
+      "favorable_direction": "higher simulated engagement and mood, with richer simulated communication observations.",
+      "rubric": "A favorable software outcome is higher simulated engagement and mood and more varied simulated communication observations. The observations are model-generated text constrained by the persona's listed modes, not real behavior.",
+      "stop_conditions": [
+        "If simulated anxiety_level >= 8, display the high-simulated-distress stop-condition flag and offer a stop control.",
+        "If volume is 'high', display the explicit high-volume caution flag."
+      ],
+      "clinical_note": "Software outcome only; not a validated measure of social engagement or communication and not a communication intervention."
+    },
+    {
+      "id": "regulation_support",
+      "label": "Regulation support",
+      "outcome_focus": ["regulation_score", "mood_score", "anxiety_level"],
+      "favorable_direction": "higher simulated regulation and mood, and lower simulated anxiety.",
+      "rubric": "A favorable software outcome is higher simulated regulation and mood with lower simulated anxiety, indicating simulated recovery/co-regulation. This is a constructed descriptive index, not a validated regulation measure.",
+      "stop_conditions": [
+        "If simulated anxiety_level >= 8, display the high-simulated-distress stop-condition flag and offer a stop control.",
+        "If volume is 'high', display the explicit high-volume caution flag."
+      ],
+      "clinical_note": "Software outcome only; not a validated measure of emotional regulation and not a treatment for dysregulation."
+    }
+  ],
+  "outcome_dimensions": {
+    "description": "ReactionOutput fields used as descriptive software signals, not clinical instruments.",
+    "dimensions": {
+      "anxiety_level": {"range": [1, 10], "meaning": "Simulated anxiety signal; higher means more simulated distress."},
+      "engagement_level": {"range": [1, 10], "meaning": "Simulated engagement with the stimulus; higher means more simulated engagement."},
+      "mood_score": {"range": [1, 10], "meaning": "Simulated mood signal; higher means a more favorable simulated mood."},
+      "regulation_score": {"range": [1, 10], "meaning": "Simulated regulation/co-regulation signal; higher means better simulated regulation."},
+      "attention_duration_sec": {"range": [0, 1800], "meaning": "Simulated sustained attention to the stimulus in seconds."}
+    },
+    "clinical_note": "These are researcher-defined descriptive indices constructed from synthetic profiles and music parameters. They are not validated clinical instruments and must not be reported as clinical evidence."
+  }
+}

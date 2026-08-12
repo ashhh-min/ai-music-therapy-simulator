@@ -65,6 +65,15 @@ class Persona(BaseModel):
 
 
 class MusicParameters(BaseModel):
+    """Controlled music-stimulus vocabulary for a synthetic trial.
+
+    Allowed values are bounded by Pydantic ``Literal``/``Field`` constraints,
+    which are the runtime-enforced source of truth. The same vocabulary is
+    declared in ``config/music_ontology.json`` (kept consistent by tests) and
+    documented in ``docs/scenario_rubric.md``. These are simulated inputs, not
+    a prescription for a delivered clinical intervention.
+    """
+
     genre: Literal["classical", "popular", "nature", "instrumental", "vocal"]
     bpm: int = Field(ge=40, le=120)
     volume: Literal["low", "medium", "high"]
@@ -82,6 +91,14 @@ class TimeStage(BaseModel):
 
 
 class ReactionOutput(BaseModel):
+    """Synthetic, non-clinical reaction hypothesis for one trial.
+
+    The numeric fields are researcher-defined descriptive software signals
+    constructed from a synthetic persona and music parameters. They are not
+    validated clinical instruments and must not be reported as clinical
+    evidence (see ``config/music_ontology.json`` outcome_dimensions).
+    """
+
     anxiety_level: int = Field(ge=1, le=10)
     engagement_level: int = Field(ge=1, le=10)
     mood_score: int = Field(ge=1, le=10)
@@ -97,6 +114,14 @@ class ReactionOutput(BaseModel):
 
 
 class TrialRecord(BaseModel):
+    """One synthetic trial with full provenance.
+
+    ``scene`` is one of the five support scenarios whose software outcome
+    rubric and stop conditions are defined in ``docs/scenario_rubric.md`` and
+    ``config/music_ontology.json``. Every record carries engine/model/prompt/
+    seed/timestamp provenance and a fixed synthetic disclaimer.
+    """
+
     trial_id: str
     persona_id: str
     scene: Literal[

@@ -58,4 +58,16 @@ For every session, append:
 - Student explanation of one key decision: Enforce multidimensionality and reject a functioning-level label at the schema level (`extra="forbid"` + required named dimensions + non-empty fields), so the safeguard is structural and testable rather than relying on convention.
 - Errors or rejected suggestions: None. Limitation noted: schema enforces structure, not meaning — stereotype/representation risk remains and is documented.
 - Evidence path: `evidence/S03/summary.md`, `evidence/S03/check_outputs.txt`.
-- Mentor acceptance or required revision: Awaiting mentor acceptance; S04 not started.
+- Mentor acceptance or required revision: Accepted; S04 started after resume.
+
+## S04 — Music Parameter Ontology and Scenario Rubric — 2026-08-12
+
+- Unit ID and date: S04, 2026-08-12 (code + data + docs).
+- Student's intended change: Define the controlled music parameter vocabulary, five support scenarios, and non-clinical outcome rubric.
+- AI assistance used: Claude Code (CLI) — wrote the ontology JSON, added model docstrings, wrote the rubric doc, added consistency tests, ran checks.
+- Files changed: `config/music_ontology.json` (new), `docs/scenario_rubric.md` (new), `src/ai_music_therapy/models.py` (docstrings on MusicParameters/ReactionOutput/TrialRecord), `tests/test_models.py` (4 ontology-consistency tests). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D010), and this log.
+- Tests/checks run and actual results: smoke_test PASS; pytest 14 passed (10 baseline + 4 new); `git diff --check` clean; ontology JSON parses with 5 scenarios (each with rubric+stop+clinical_note); secret scan clean; ruff unchanged at 26 (0 introduced).
+- Student explanation of one key decision: Make the vocabulary and rubric centralized data in `config/music_ontology.json` and bind it to the Pydantic schema with a consistency test, so the human-readable ontology and the enforced schema cannot drift.
+- Errors or rejected suggestions: None. Limitation noted: the ontology is a narrow teaching vocabulary and the rubric reads only simulated signals.
+- Evidence path: `evidence/S04/summary.md`, `evidence/S04/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S05 not started.
