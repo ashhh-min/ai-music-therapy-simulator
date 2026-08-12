@@ -2,24 +2,39 @@ import streamlit as st
 
 st.title("AI Music Therapy")
 st.subheader("Neurodiversity Simulation Lab")
+
 st.warning(
-    "Educational synthetic simulation only. This application does not predict a real child's "
-    "response, diagnose autism, recommend treatment, or establish therapeutic effectiveness."
+    "Educational synthetic simulation only. Outputs do not predict any real "
+    "child's response, diagnose autism, recommend treatment, or establish "
+    "therapeutic effectiveness."
 )
 
 st.markdown(
     """
-This lab preserves the original project loop:
+This is an evidence-first educational prototype. Define **fictional, explicitly
+synthetic** autistic-persona profiles, configure music parameters and a support
+scenario, run reproducible hypothesis simulations, and analyze the synthetic
+outputs.
 
-**Persona definition → music input → synthetic response → analysis → strategy revision**
+**The loop:** persona → music parameters → synthetic response hypothesis → descriptive analysis.
 
-The refined implementation adds four controls:
-
-1. Every persona and trial is explicitly synthetic.
-2. Deterministic mode provides reproducible offline testing.
-3. AI mode uses structured outputs and records model/prompt provenance.
-4. All conclusions must separate software observations from clinical claims.
+Every persona and every output is explicitly synthetic. Nothing here diagnoses,
+prescribes, or predicts a real person's response.
 """
 )
 
-st.info("Begin by seeding the demo database: `python -m ai_music_therapy.seed_demo`.")
+st.markdown("### How to use the lab")
+st.markdown(
+    """
+1. **Synthetic Personas** — browse the five fictional profiles.
+2. **Run a Trial** — choose a persona, music, and a support scenario. The
+   deterministic engine is the default and needs no API key.
+3. **Dashboard** — view descriptive summaries of saved synthetic trials.
+4. **Methods and Limits** — read the evidence boundary and the project limitations.
+"""
+)
+
+st.info(
+    "If no personas appear, seed the demo database first: "
+    "`python -m ai_music_therapy.seed_demo`."
+)

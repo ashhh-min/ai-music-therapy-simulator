@@ -84,5 +84,11 @@ if st.button("Run synthetic trial", type="primary"):
         st.metric("Engagement", reaction.engagement_level)
         st.metric("Regulation", reaction.regulation_score)
         st.json(trial.model_dump())
+        st.caption(
+            "Synthetic result only: not a clinical prediction or treatment "
+            "recommendation."
+        )
+        if reaction.safety_flags:
+            st.warning("  •  ".join(reaction.safety_flags))
     except Exception as exc:
         st.error(str(exc))

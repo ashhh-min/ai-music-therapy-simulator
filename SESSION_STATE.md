@@ -18,8 +18,11 @@ Use this file when pausing or resuming work.
 6. Continue from the current state; do not regenerate validated modules.
 
 ## Current Resume Record
-- Active unit: S06 (complete 2026-08-12; awaiting acceptance). Next unit is S07 — do not start until accepted.
-- Last checkpoint: 3b5f14e (S05 preregistration). Pre-S06 checkpoint: 3b5f14e.
-- Last passing commands: `.venv/bin/python scripts/smoke_test.py` (PASS), `.venv/bin/python -m pytest` (18 passed), `.venv/bin/ruff check src tests scripts` (clean); see `evidence/S06/check_outputs.txt`.
+- Active unit: S07 accepted and committed (2026-08-12); between-session infra/safety work also committed. Next unit is S08 — activate on resume.
+- Last checkpoint: run `git rev-parse --short HEAD` on resume (S07 + infra committed 2026-08-12); prior accepted = c87c076 (S06).
+- Last passing commands: `.venv/bin/python scripts/smoke_test.py` (PASS), `.venv/bin/python -m pytest` (18 passed), `.venv/bin/ruff check src tests scripts` (clean), headless AppTest of the UI shell; see `evidence/S07/check_outputs.txt`.
 - Interpreter: `.venv/bin/python` (Python 3.13.14). System `python3` (3.9.6) is below the required 3.11 and must not be used.
-- Outstanding acceptance item: Mentor acceptance of S06, then activate S07 (Streamlit Navigation and Interface Shell).
+- To run the UI: `streamlit run app.py` (deterministic by default; seed first with `python -m ai_music_therapy.seed_demo`).
+- Credentials: real key in gitignored `.env.local`; never commit `.env.*` (except `.env.example`).
+- AI mode: NOT yet functional with GLM — deferred to S10 (Responses API vs GLM /chat/completions; also set OPENAI_BASE_URL to the API root). See D014.
+- On resume: `git status` / `git log`, re-read `TASKS.md` + this file + the S08 prompt, re-run smoke + pytest, then activate S08 (SQLite Persistence and Synthetic Fixtures).

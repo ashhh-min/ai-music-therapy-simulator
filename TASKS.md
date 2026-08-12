@@ -15,18 +15,18 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S06
-Unit focus: Repository Contracts, Schemas, and Tests (code + config + tests).
-Current prompt: `prompts/Session_06_Repository_Contracts_Schemas_and_Tests.md`
-Status: Accepted and committed on 2026-08-12. S07 is the next unit and is NOT yet started; activate it next.
-Acceptance evidence: `evidence/S06/summary.md`, `evidence/S06/check_outputs.txt`.
-Pre-unit checkpoint: 3b5f14e.
+Unit code: S07
+Unit focus: Streamlit Navigation and Interface Shell (UI).
+Current prompt: `prompts/Session_07_Streamlit_Navigation_and_Interface_Shell.md`
+Status: Accepted and committed on 2026-08-12. S08 is the next unit; activate it on resume.
+Acceptance evidence: `evidence/S07/summary.md`, `evidence/S07/check_outputs.txt`.
+Pre-unit checkpoint: c87c076.
 
 ## Acceptance Criteria for Current Unit
-- Smoke and unit tests pass without API credentials: YES.
-- Schemas reject invalid/unlabelled records (extra=forbid + synthetic enforcement + tests): YES.
-- CI does not depend on a live API (`AI_MUSIC_APP_MODE=deterministic`; ai_client guarded): YES.
-- ruff now clean (26 pre-existing fixed → 0); smoke + pytest pass (18 passed); `git diff --check` clean.
+- All pages load with useful empty states (AppTest-verified): YES.
+- Disclaimer visible on Home and trial/results surfaces (plus global sidebar): YES.
+- No future analytics or AI logic implemented early (existing logic preserved): YES.
+- py_compile + ruff clean; smoke + pytest pass (18); `git diff --check` clean.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -37,7 +37,7 @@ Pre-unit checkpoint: 3b5f14e.
 - [x] S04 - Music parameter ontology and scenario rubric (complete 2026-08-12; accepted)
 - [x] S05 - Experiment design and preregistration (complete 2026-08-12; accepted)
 - [x] S06 - Repository contracts, schemas, and tests (complete 2026-08-12; accepted)
-- [ ] S07 - Streamlit navigation and interface shell
+- [x] S07 - Streamlit navigation and interface shell (complete 2026-08-12; accepted)
 - [ ] S08 - SQLite persistence and synthetic fixtures
 - [ ] S09 - Deterministic reference simulator
 - [ ] S10 - OpenAI Responses API and structured outputs
@@ -56,16 +56,15 @@ Pre-unit checkpoint: 3b5f14e.
   - The optional AI-mode default model id `gpt-5.6-terra` is a placeholder overridable via `OPENAI_MODEL`; confirm/replace with a valid model id before enabling AI mode.
   - Setup note (resolved): the system `python3` is 3.9.6, below `requires-python = ">=3.11"`. A `.venv` was created from Python 3.13.14 (conda env `vibe-ash`) and the package installed successfully. Future setups must use a Python 3.11+ interpreter.
   - Pre-existing lint (RESOLVED at S06): `ruff check src tests scripts` was 26 errors on the starter baseline; S06 fixed all of them and the gate is now green. Remaining follow-up: make `scripts/run_batch_demo.py` read `config/trial_matrix.csv` in S16 so the runner shares the matrix's single source of truth.
+  - AI mode not yet functional with GLM (verified 2026-08-12): the user's `.env.local` sets `OPENAI_MODEL=glm-5.2` + `OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/chat/completions` + a real key. A live probe returned 404 `path: /v4/chat/completions/responses`. Two causes for S10 to resolve: (a) `src/ai_music_therapy/ai_client.py` uses the OpenAI **Responses API** (`client.responses.parse`), which GLM's compatibility layer does not support (it exposes `/chat/completions`); (b) `OPENAI_BASE_URL` should be the API root (`https://open.bigmodel.cn/api/paas/v4`) without the `/chat/completions` suffix. Deterministic mode (default) is unaffected.
 
 ## Last Test Evidence
-- Unit: S06 (code + config + tests: contracts, CI, baseline tests).
-- Smoke test (`python scripts/smoke_test.py`): PASS — now also runs one deterministic simulate() and checks the 75-cell matrix.
-- pytest: 18 passed (was 14; +4 contract/repository/ai-client tests).
-- `ruff check src tests scripts`: **All checks passed!** (0; was 26 pre-existing).
-- `git diff --check`: clean.
-- Scan: 0 secrets; clinical-claim match is only the guard-test assertion.
-- CI no-API: `.env.example` keeps `OPENAI_API_KEY=` empty; CI sets `AI_MUSIC_APP_MODE=deterministic`.
-- Raw output: `evidence/S06/check_outputs.txt`.
+- Unit: S07 (UI shell).
+- py_compile all UI + app.py: OK. `ruff check src tests scripts`: All checks passed!
+- Smoke test: PASS. pytest: 18 passed (no regression).
+- Headless AppTest: app.py loads (no exception); global sidebar disclaimer + Home disclaimer + title present; personas/dashboard load with empty states; methods loads with disclaimer.
+- `git diff --check`: clean. Scan: 0 secrets; clinical-claim match is only the disclaimer negation.
+- Raw output: `evidence/S07/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -79,6 +78,7 @@ Pre-unit checkpoint: 3b5f14e.
 - S04 music ontology (see D010): `config/music_ontology.json` declares the controlled vocabulary + 5 non-clinical scenario rubrics/stop-conditions; a test keeps the JSON in sync with the Pydantic schema; `docs/scenario_rubric.md` is the human-readable spec.
 - S05 preregistration (see D011): 75-cell 5×5×3 matrix frozen in `config/trial_matrix.csv`; non-clinical hypotheses, variables, and exclusion rules in `docs/preregistration.md`; descriptive analysis plan in `docs/analysis_plan.md`. A future unit (S06/S16) should add a guard test so the batch runner cannot drift from the matrix.
 - S06 contracts/CI/tests (see D012): fixed all 26 ruff errors; added `extra="forbid"` to TimeStage/ReactionOutput/TrialRecord; extended smoke_test to cover the deterministic loop + matrix; CI forces `AI_MUSIC_APP_MODE=deterministic`; added 4 tests (matrix contract, extra-field rejection, trial round-trip, ai-client no-key). The matrix is now guarded as a contract; S16 should make the batch runner read it.
+- S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-After S06 is accepted, activate S07 (Streamlit Navigation and Interface Shell) only. Do not begin S07 or any implementation work early.
+After S07 is accepted, activate S08 (SQLite Persistence and Synthetic Fixtures) only. Do not begin S08 or any implementation work early.

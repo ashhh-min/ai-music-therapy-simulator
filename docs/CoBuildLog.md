@@ -94,4 +94,28 @@ For every session, append:
 - Student explanation of one key decision: Add `extra="forbid"` to all data models and a committed trial-matrix contract test so invalid/unlabelled records and any drift from the preregistered matrix are caught automatically rather than by convention.
 - Errors or rejected suggestions: None. Follow-up noted: make the batch runner read `config/trial_matrix.csv` in S16 (single source of truth).
 - Evidence path: `evidence/S06/summary.md`, `evidence/S06/check_outputs.txt`.
-- Mentor acceptance or required revision: Awaiting mentor acceptance; S07 not started.
+- Mentor acceptance or required revision: Accepted; S07 started.
+
+## S07 — Streamlit Navigation and Interface Shell — 2026-08-12
+
+- Unit ID and date: S07, 2026-08-12 (UI).
+- Student's intended change: Implement the multipage Streamlit shell, global disclaimer, empty states, and navigation only.
+- AI assistance used: Claude Code (CLI) — rewrote app.py/home.py/methods.py, edited trial.py, verified pages headlessly with streamlit AppTest.
+- Files changed: `app.py`, `src/ai_music_therapy/ui/{home,trial,methods}.py`. `personas.py` and `dashboard.py` unchanged (already met empty-state/synthetic criteria; now carry the global sidebar disclaimer). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D013), and this log.
+- Tests/checks run and actual results: py_compile OK; ruff All checks passed!; smoke PASS; pytest 18 passed (no regression); headless AppTest — all pages load with no exception, empty states present, disclaimer visible globally + on Home/methods/trial results; git diff --check clean; secret scan 0.
+- Student explanation of one key decision: Put the disclaimer in the app.py sidebar so it is global (every page) rather than re-implementing it per page, and verify the shell headlessly with AppTest so "all pages load" is checked, not assumed.
+- Errors or rejected suggestions: None. Limitation noted: AppTest is headless and does not exercise real browser interaction or the live AI path; full UI verification is deferred to the S18 manual demo.
+- Evidence path: `evidence/S07/summary.md`, `evidence/S07/check_outputs.txt`.
+- Mentor acceptance or required revision: Accepted; S08 not started.
+
+## Between sessions — local credentials + AI-mode probe — 2026-08-12
+
+- Unit ID and date: between-session infrastructure/safety work, 2026-08-12 (not a session unit).
+- Student's intended change: Use real credentials kept in `.env.local`; ensure it is never committed; broadly check the app before next session.
+- AI assistance used: Claude Code (CLI) — gitignore/safety hardening, config + env-example changes, headless + live verification.
+- Files changed: `.gitignore` (cover `.env`/`.env.*`, keep `.env.example`), `src/ai_music_therapy/config.py` (load `.env.local` with override), `.env.example` (document `OPENAI_BASE_URL`). Recorded in D014.
+- Tests/checks run and actual results: `.env.local` confirmed ignored + untracked + absent from history; smoke + pytest (18) + ruff green; AppTest shell loads; end-to-end deterministic data path works (seed → trial → persist → provenance). Live AI probe returned 404 `…/v4/chat/completions/responses` (see D014): AI mode not yet functional with GLM — deferred to S10.
+- Student explanation of one key decision: Keep the secret out of git by ignoring `.env.*`, and make the app read the user's chosen `.env.local` rather than asking them to rename it.
+- Errors or rejected suggestions: Did not edit `.env.local` or guess the GLM base URL; did not implement the S10 AI-client fix (out of scope between sessions).
+- Evidence path: `evidence/S07/check_outputs.txt` (regression); AI-probe output captured in this log.
+- Mentor acceptance or required revision: Infra/safety changes committed; S08 is the next unit.
