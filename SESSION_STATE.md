@@ -18,8 +18,8 @@ Use this file when pausing or resuming work.
 6. Continue from the current state; do not regenerate validated modules.
 
 ## Current Resume Record
-- Active unit: S05 (complete 2026-08-12; awaiting acceptance). Next unit is S06 — do not start until accepted.
-- Last checkpoint: a31c450 (S04 music ontology). Pre-S05 checkpoint: a31c450.
-- Last passing commands: `.venv/bin/python scripts/smoke_test.py` (PASS) and `.venv/bin/python -m pytest` (14 passed); see `evidence/S05/check_outputs.txt`.
+- Active unit: S06 (complete 2026-08-12; awaiting acceptance). Next unit is S07 — do not start until accepted.
+- Last checkpoint: 3b5f14e (S05 preregistration). Pre-S06 checkpoint: 3b5f14e.
+- Last passing commands: `.venv/bin/python scripts/smoke_test.py` (PASS), `.venv/bin/python -m pytest` (18 passed), `.venv/bin/ruff check src tests scripts` (clean); see `evidence/S06/check_outputs.txt`.
 - Interpreter: `.venv/bin/python` (Python 3.13.14). System `python3` (3.9.6) is below the required 3.11 and must not be used.
-- Outstanding acceptance item: Mentor acceptance of S05, then activate S06 (Repository Contracts, Schemas, and Tests).
+- Outstanding acceptance item: Mentor acceptance of S06, then activate S07 (Streamlit Navigation and Interface Shell).

@@ -23,7 +23,13 @@ if not personas:
 persona = st.selectbox("Synthetic persona", personas, format_func=lambda p: p.display_name)
 scene = st.selectbox(
     "Support scenario",
-    ["sleep_support", "anxiety_support", "focus_support", "engagement_support", "regulation_support"],
+    [
+        "sleep_support",
+        "anxiety_support",
+        "focus_support",
+        "engagement_support",
+        "regulation_support",
+    ],
 )
 
 c1, c2, c3 = st.columns(3)
@@ -32,7 +38,9 @@ with c1:
     bpm = st.slider("Tempo (BPM)", 40, 120, 68)
     volume = st.selectbox("Volume category", ["low", "medium", "high"])
 with c2:
-    instrument = st.selectbox("Primary instrument", ["piano", "guitar", "percussion", "synth", "voice", "mixed"])
+    instrument = st.selectbox(
+        "Primary instrument", ["piano", "guitar", "percussion", "synth", "voice", "mixed"]
+    )
     tonality = st.selectbox("Tonality", ["major", "minor", "atonal"])
     duration_sec = st.selectbox("Duration", [60, 180, 300])
 with c3:

@@ -18,13 +18,30 @@ def main() -> None:
 
     personas = [
         Persona.model_validate(item)
-        for item in json.loads(Path("data/public/synthetic_personas.json").read_text(encoding="utf-8"))
+        for item in json.loads(
+            Path("data/public/synthetic_personas.json").read_text(encoding="utf-8")
+        )
     ]
-    scenes = ["sleep_support", "anxiety_support", "focus_support", "engagement_support", "regulation_support"]
+    scenes = [
+        "sleep_support",
+        "anxiety_support",
+        "focus_support",
+        "engagement_support",
+        "regulation_support",
+    ]
     variants = [
-        MusicParameters(genre="instrumental", bpm=54, volume="low", instrument="piano", tonality="major", duration_sec=180),
-        MusicParameters(genre="instrumental", bpm=82, volume="medium", instrument="percussion", tonality="major", duration_sec=180),
-        MusicParameters(genre="nature", bpm=64, volume="low", instrument="mixed", tonality="atonal", duration_sec=180),
+        MusicParameters(
+            genre="instrumental", bpm=54, volume="low", instrument="piano",
+            tonality="major", duration_sec=180,
+        ),
+        MusicParameters(
+            genre="instrumental", bpm=82, volume="medium", instrument="percussion",
+            tonality="major", duration_sec=180,
+        ),
+        MusicParameters(
+            genre="nature", bpm=64, volume="low", instrument="mixed",
+            tonality="atonal", duration_sec=180,
+        ),
     ]
 
     output = Path(args.output)

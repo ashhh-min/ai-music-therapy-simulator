@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -84,6 +84,8 @@ class MusicParameters(BaseModel):
 
 
 class TimeStage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     stage: Literal["start", "middle", "end"]
     observation: str
     anxiety_level: int = Field(ge=1, le=10)
@@ -98,6 +100,8 @@ class ReactionOutput(BaseModel):
     validated clinical instruments and must not be reported as clinical
     evidence (see ``config/music_ontology.json`` outcome_dimensions).
     """
+
+    model_config = ConfigDict(extra="forbid")
 
     anxiety_level: int = Field(ge=1, le=10)
     engagement_level: int = Field(ge=1, le=10)
@@ -122,6 +126,8 @@ class TrialRecord(BaseModel):
     seed/timestamp provenance and a fixed synthetic disclaimer.
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     trial_id: str
     persona_id: str
     scene: Literal[
@@ -137,7 +143,7 @@ class TrialRecord(BaseModel):
     model_name: str | None = None
     prompt_version: str
     seed: int | None = None
-    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     disclaimer: str = (
         "Synthetic educational simulation; not a clinical prediction or treatment recommendation."
     )

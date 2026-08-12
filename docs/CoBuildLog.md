@@ -82,4 +82,16 @@ For every session, append:
 - Student explanation of one key decision: Make the 3 variants in the matrix identical to those already encoded in the batch runner so the preregistered design and the future S16 run cannot disagree by construction.
 - Errors or rejected suggestions: None. Limitation noted: the preregistration is data/prose and not yet enforced by code; a guard test is recommended for S06/S16.
 - Evidence path: `evidence/S05/summary.md`, `evidence/S05/check_outputs.txt`.
-- Mentor acceptance or required revision: Awaiting mentor acceptance; S06 not started.
+- Mentor acceptance or required revision: Accepted; S06 started.
+
+## S06 — Repository Contracts, Schemas, and Tests — 2026-08-12
+
+- Unit ID and date: S06, 2026-08-12 (code + config + tests).
+- Student's intended change: Strengthen package contracts, validation, CI, and baseline tests without adding UI features.
+- AI assistance used: Claude Code (CLI) — fixed ruff, tightened model contracts, extended the smoke test and CI, added tests, ran checks.
+- Files changed: `src/ai_music_therapy/{models,deterministic_simulator,repository,ai_client}.py`, `src/ai_music_therapy/ui/{dashboard,personas,trial}.py` (formatting-only), `scripts/{smoke_test,run_batch_demo}.py`, `.github/workflows/ci.yml`, `tests/{test_models,test_repository,test_analytics}.py`, and new `tests/test_ai_client.py`. Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D012), and this log.
+- Tests/checks run and actual results: smoke_test PASS (extended); pytest 18 passed (was 14); `ruff check src tests scripts` → All checks passed! (0; was 26 pre-existing); `git diff --check` clean; secret scan 0; CI confirmed API-free.
+- Student explanation of one key decision: Add `extra="forbid"` to all data models and a committed trial-matrix contract test so invalid/unlabelled records and any drift from the preregistered matrix are caught automatically rather than by convention.
+- Errors or rejected suggestions: None. Follow-up noted: make the batch runner read `config/trial_matrix.csv` in S16 (single source of truth).
+- Evidence path: `evidence/S06/summary.md`, `evidence/S06/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S07 not started.

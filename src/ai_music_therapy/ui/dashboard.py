@@ -17,8 +17,13 @@ if not trials:
 frame = trials_to_frame(trials)
 st.dataframe(frame, use_container_width=True)
 
-heat = frame.pivot_table(index="persona_id", columns="scene", values="composite_score", aggfunc="mean")
-st.plotly_chart(px.imshow(heat, text_auto=True, aspect="auto", title="Descriptive Composite Index"), use_container_width=True)
+heat = frame.pivot_table(
+    index="persona_id", columns="scene", values="composite_score", aggfunc="mean"
+)
+st.plotly_chart(
+    px.imshow(heat, text_auto=True, aspect="auto", title="Descriptive Composite Index"),
+    use_container_width=True,
+)
 
 st.plotly_chart(
     px.scatter(
@@ -33,4 +38,7 @@ st.plotly_chart(
     use_container_width=True,
 )
 
-st.warning("Charts summarize generated synthetic outputs. They are not evidence of clinical efficacy.")
+st.warning(
+    "Charts summarize generated synthetic outputs. "
+    "They are not evidence of clinical efficacy."
+)

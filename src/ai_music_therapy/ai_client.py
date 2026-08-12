@@ -5,7 +5,6 @@ from openai import OpenAI
 from .config import settings
 from .models import MusicParameters, Persona, ReactionOutput
 
-
 SYSTEM_BOUNDARY = """
 You are generating synthetic educational research content for a software prototype.
 Never claim to predict a real autistic child's behavior, diagnose anyone, prescribe treatment,

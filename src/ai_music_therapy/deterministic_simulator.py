@@ -9,7 +9,7 @@ _VOLUME_LEVEL = {"low": 2, "medium": 5, "high": 8}
 
 
 def stable_seed(persona_id: str, scene: str, music: MusicParameters) -> int:
-    raw = f"{persona_id}|{scene}|{music.model_dump_json()}".encode("utf-8")
+    raw = f"{persona_id}|{scene}|{music.model_dump_json()}".encode()
     return int(hashlib.sha256(raw).hexdigest()[:8], 16)
 
 
@@ -30,8 +30,18 @@ def simulate(persona: Persona, music: MusicParameters, scene: str) -> tuple[Reac
     abruptness = 2 if music.tonality == "atonal" else 0
     lyric_load = 2 if music.lyrics_language != "none" else 0
 
-    anxiety = _clamp(2 + 0.55 * auditory + 0.45 * volume_pressure + 0.35 * tempo_distance + abruptness + 0.25 * lyric_load - 4)
-    engagement = _clamp(4 + 0.6 * seeking - 0.35 * tempo_distance - 0.35 * anxiety + rng.uniform(-0.8, 0.8))
+    anxiety = _clamp(
+        2
+        + 0.55 * auditory
+        + 0.45 * volume_pressure
+        + 0.35 * tempo_distance
+        + abruptness
+        + 0.25 * lyric_load
+        - 4
+    )
+    engagement = _clamp(
+        4 + 0.6 * seeking - 0.35 * tempo_distance - 0.35 * anxiety + rng.uniform(-0.8, 0.8)
+    )
 
     if music.instrument == "percussion" and seeking >= 7:
         engagement = _clamp(engagement + 2)
@@ -72,13 +82,29 @@ def simulate(persona: Persona, music: MusicParameters, scene: str) -> tuple[Reac
             "Synthetic communication response is constrained by the persona's listed modes."
         ],
         time_series=[
-            TimeStage(stage="start", observation="Initial orientation to sound.", anxiety_level=start_a, engagement_level=start_e),
-            TimeStage(stage="middle", observation="Response after the pattern becomes more predictable.", anxiety_level=middle_a, engagement_level=middle_e),
-            TimeStage(stage="end", observation="State at the end of the configured trial.", anxiety_level=end_a, engagement_level=end_e),
+            TimeStage(
+                stage="start",
+                observation="Initial orientation to sound.",
+                anxiety_level=start_a,
+                engagement_level=start_e,
+            ),
+            TimeStage(
+                stage="middle",
+                observation="Response after the pattern becomes more predictable.",
+                anxiety_level=middle_a,
+                engagement_level=middle_e,
+            ),
+            TimeStage(
+                stage="end",
+                observation="State at the end of the configured trial.",
+                anxiety_level=end_a,
+                engagement_level=end_e,
+            ),
         ],
         research_notes=(
-            "Rule-based reference output for software testing. Scores are constructed from the synthetic "
-            "profile and music parameters; they are not validated clinical measures."
+            "Rule-based reference output for software testing. Scores are constructed "
+            "from the synthetic profile and music parameters; they are not validated "
+            "clinical measures."
         ),
         uncertainty_note="High uncertainty: this is a fictional, deterministic teaching model.",
         safety_flags=flags,

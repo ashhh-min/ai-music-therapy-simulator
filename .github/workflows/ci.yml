@@ -7,6 +7,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      # CI must never depend on a live API. Deterministic mode needs no key.
+      AI_MUSIC_APP_MODE: deterministic
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

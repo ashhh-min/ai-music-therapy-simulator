@@ -1,3 +1,4 @@
+import csv
 import json
 from pathlib import Path
 from typing import get_args
@@ -5,10 +6,18 @@ from typing import get_args
 import pytest
 from pydantic import ValidationError
 
-from ai_music_therapy.models import MusicParameters, Persona, SupportProfile, TrialRecord
+from ai_music_therapy.deterministic_simulator import simulate
+from ai_music_therapy.models import (
+    MusicParameters,
+    Persona,
+    ReactionOutput,
+    SupportProfile,
+    TrialRecord,
+)
 
 PERSONAS_PATH = Path("data/public/synthetic_personas.json")
 ONTOLOGY_PATH = Path("config/music_ontology.json")
+TRIAL_MATRIX_PATH = Path("config/trial_matrix.csv")
 
 
 def _load_personas() -> list[Persona]:
@@ -140,3 +149,48 @@ def test_outcome_dimensions_are_declared_non_clinical():
     for dim in block["dimensions"].values():
         lo, hi = dim["range"]
         assert lo < hi
+
+
+# --- Trial matrix and record contracts (S06) ----------------------------------
+
+
+def test_trial_matrix_is_well_formed_contract():
+    rows = list(csv.DictReader(TRIAL_MATRIX_PATH.open(encoding="utf-8")))
+    assert len(rows) == 75
+    assert {r["persona_id"] for r in rows} == {p.persona_id for p in _load_personas()}
+    assert {r["scene"] for r in rows} == _literal_values(TrialRecord, "scene")
+    assert {r["variant_id"] for r in rows} == {"V1", "V2", "V3"}
+    # fully crossed, unique cells
+    assert len({(r["persona_id"], r["scene"], r["variant_id"]) for r in rows}) == 75
+    assert len({r["cell_id"] for r in rows}) == 75
+    # every row's music parameters are schema-valid
+    for r in rows:
+        MusicParameters(
+            genre=r["genre"], bpm=int(r["bpm"]), volume=r["volume"],
+            instrument=r["instrument"], tonality=r["tonality"],
+            duration_sec=int(r["duration_sec"]), lyrics_language=r["lyrics_language"],
+        )
+
+
+def test_reaction_and_trial_reject_extra_fields():
+    persona = _load_personas()[0]
+    music = MusicParameters(
+        genre="instrumental", bpm=60, volume="low", instrument="piano",
+        tonality="major", duration_sec=180,
+    )
+    reaction, seed = simulate(persona, music, "sleep_support")
+
+    bad_reaction = reaction.model_dump()
+    bad_reaction["extra_unwanted"] = 1
+    with pytest.raises(ValidationError):
+        ReactionOutput.model_validate(bad_reaction)
+
+    trial = TrialRecord(
+        trial_id="T-EXTRA", persona_id=persona.persona_id, scene="sleep_support",
+        music=music, reaction=reaction, engine="deterministic",
+        prompt_version="test", seed=seed,
+    )
+    bad_trial = trial.model_dump()
+    bad_trial["extra_unwanted"] = 1
+    with pytest.raises(ValidationError):
+        TrialRecord.model_validate(bad_trial)
