@@ -15,18 +15,18 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S04
-Unit focus: Music Parameter Ontology and Scenario Rubric (code + data + docs).
-Current prompt: `prompts/Session_04_Music_Parameter_Ontology_and_Scenario_Rubric.md`
-Status: Accepted and committed on 2026-08-12. S05 is the next unit and is NOT yet started; activate it next.
-Acceptance evidence: `evidence/S04/summary.md`, `evidence/S04/check_outputs.txt`.
-Pre-unit checkpoint: 2fdf3e3.
+Unit code: S05
+Unit focus: Experiment Design and Preregistration (docs + data).
+Current prompt: `prompts/Session_05_Experiment_Design_and_Preregistration.md`
+Status: Accepted and committed on 2026-08-12. S06 is the next unit and is NOT yet started; activate it next.
+Acceptance evidence: `evidence/S05/summary.md`, `evidence/S05/check_outputs.txt`.
+Pre-unit checkpoint: a31c450.
 
 ## Acceptance Criteria for Current Unit
-- Allowed BPM, volume, instrument, tonality, duration, lyrics, and scenario values are explicit (`config/music_ontology.json`, matched to the model by test): YES.
-- Each scenario has a software outcome rubric and stop condition (`docs/scenario_rubric.md`): YES.
-- No rubric is described as a validated clinical measure (each has a non-clinical note; guard test): YES.
-- smoke + pytest pass (14 passed); `git diff --check` clean; ruff unchanged (0 new).
+- Exactly 75 design cells are defined (`config/trial_matrix.csv`): YES.
+- Independent, dependent, controlled, and provenance variables are explicit (`docs/preregistration.md`): YES.
+- Analysis and exclusion rules are frozen before S16 (`docs/analysis_plan.md`, `docs/preregistration.md`): YES.
+- smoke + pytest pass (14 passed); `git diff --check` clean; matrix validated against fixtures/model/batch runner.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -35,7 +35,7 @@ Pre-unit checkpoint: 2fdf3e3.
 - [x] S02 - Evidence review protocol and bibliography (complete 2026-08-03; accepted)
 - [x] S03 - Persona schema and neurodiversity safeguards (complete 2026-08-03; accepted)
 - [x] S04 - Music parameter ontology and scenario rubric (complete 2026-08-12; accepted)
-- [ ] S05 - Experiment design and preregistration
+- [x] S05 - Experiment design and preregistration (complete 2026-08-12; accepted)
 - [ ] S06 - Repository contracts, schemas, and tests
 - [ ] S07 - Streamlit navigation and interface shell
 - [ ] S08 - SQLite persistence and synthetic fixtures
@@ -58,14 +58,13 @@ Pre-unit checkpoint: 2fdf3e3.
   - Pre-existing lint (observed at S03): `ruff check src tests scripts` reports 26 errors on the committed starter baseline; S03 introduced 0 of them. The release gate requires ruff to pass, so these should be cleared in a dedicated cleanup/release unit (e.g., S06 or S18).
 
 ## Last Test Evidence
-- Unit: S04 (code + data + docs: music ontology + rubric).
+- Unit: S05 (docs + data: preregistration + trial matrix).
 - Smoke test (`python scripts/smoke_test.py`): PASS — five validated synthetic personas.
-- pytest: 14 passed (10 baseline + 4 new ontology-consistency tests).
+- pytest: 14 passed (baseline preserved).
 - `git diff --check`: clean.
-- Ontology JSON parses; 5 scenarios; each has rubric + stop_conditions + clinical_note.
-- Scan: 0 secrets; clinical-claim matches are only the disclaimer and the guard test (negations).
-- ruff: 26 pre-existing errors (unchanged by S04; 0 introduced).
-- Raw output: `evidence/S04/check_outputs.txt`.
+- `config/trial_matrix.csv`: exactly 75 cells; personas match fixture IDs; scenes match `TrialRecord.scene`; fully crossed; variants V1–V3 match `scripts/run_batch_demo.py`; all values schema-valid.
+- Scan: 0 secrets; 0 clinical overclaims.
+- Raw output: `evidence/S05/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -77,6 +76,7 @@ Pre-unit checkpoint: 2fdf3e3.
 - S02 evidence base (see D008): 8 real sources logged in `docs/evidence_table.csv`; 8 background claims mapped in `docs/claim_ledger.md`; non-systematic search log added to `docs/LiteratureReviewProtocol.md`; unverified figures marked "verify before public release".
 - S03 persona schema (see D009): `SupportProfile` (communication/sensory/routine/social) replaces the loose dict; `extra="forbid"` + non-empty fields enforce multidimensional support and reject a functioning-level label; `docs/persona_design.md` documents safeguards and representation limits.
 - S04 music ontology (see D010): `config/music_ontology.json` declares the controlled vocabulary + 5 non-clinical scenario rubrics/stop-conditions; a test keeps the JSON in sync with the Pydantic schema; `docs/scenario_rubric.md` is the human-readable spec.
+- S05 preregistration (see D011): 75-cell 5×5×3 matrix frozen in `config/trial_matrix.csv`; non-clinical hypotheses, variables, and exclusion rules in `docs/preregistration.md`; descriptive analysis plan in `docs/analysis_plan.md`. A future unit (S06/S16) should add a guard test so the batch runner cannot drift from the matrix.
 
 ## Next Unit Preparation
-After S04 is accepted, activate S05 (Experiment Design and Preregistration) only. Do not begin S05 or any implementation work early.
+After S05 is accepted, activate S06 (Repository Contracts, Schemas, and Tests) only. Do not begin S06 or any implementation work early.

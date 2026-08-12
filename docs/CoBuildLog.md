@@ -70,4 +70,16 @@ For every session, append:
 - Student explanation of one key decision: Make the vocabulary and rubric centralized data in `config/music_ontology.json` and bind it to the Pydantic schema with a consistency test, so the human-readable ontology and the enforced schema cannot drift.
 - Errors or rejected suggestions: None. Limitation noted: the ontology is a narrow teaching vocabulary and the rubric reads only simulated signals.
 - Evidence path: `evidence/S04/summary.md`, `evidence/S04/check_outputs.txt`.
-- Mentor acceptance or required revision: Awaiting mentor acceptance; S05 not started.
+- Mentor acceptance or required revision: Accepted; S05 started.
+
+## S05 — Experiment Design and Preregistration — 2026-08-12
+
+- Unit ID and date: S05, 2026-08-12 (docs + data).
+- Student's intended change: Freeze the 5 × 5 × 3 synthetic trial matrix, hypotheses, variables, analysis plan, and exclusions before running trials.
+- AI assistance used: Claude Code (CLI) — generated and validated the 75-cell matrix via Python's csv module; wrote the preregistration and analysis plan; ran checks.
+- Files changed: `config/trial_matrix.csv` (new, 75 cells), `docs/preregistration.md` (new), `docs/analysis_plan.md` (new). Control files updated: `TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` (D011), and this log.
+- Tests/checks run and actual results: matrix validation PASS (75 cells; personas/scenes match fixtures + model; fully crossed; variants match `scripts/run_batch_demo.py`; schema-valid); smoke_test PASS; pytest 14 passed (baseline preserved); `git diff --check` clean; secret scan 0; clinical-overclaim scan 0.
+- Student explanation of one key decision: Make the 3 variants in the matrix identical to those already encoded in the batch runner so the preregistered design and the future S16 run cannot disagree by construction.
+- Errors or rejected suggestions: None. Limitation noted: the preregistration is data/prose and not yet enforced by code; a guard test is recommended for S06/S16.
+- Evidence path: `evidence/S05/summary.md`, `evidence/S05/check_outputs.txt`.
+- Mentor acceptance or required revision: Awaiting mentor acceptance; S06 not started.
