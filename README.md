@@ -24,6 +24,9 @@ python -m venv .venv
 # macOS/Linux: source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .[dev]
+# Start the local PostgreSQL container (requires Docker/Colima):
+colima start
+docker compose up -d
 python -m ai_music_therapy.seed_demo
 pytest
 streamlit run app.py
@@ -72,6 +75,7 @@ Default model configuration is `gpt-5.6-terra`, selected through `OPENAI_MODEL` 
 ## Main commands
 
 ```bash
+docker compose up -d   # once per machine session, after `colima start`
 python -m ai_music_therapy.seed_demo
 python scripts/smoke_test.py
 python scripts/run_batch_demo.py --output data/local/batch_demo.csv

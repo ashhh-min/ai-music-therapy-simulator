@@ -119,3 +119,17 @@ For every session, append:
 - Errors or rejected suggestions: Did not edit `.env.local` or guess the GLM base URL; did not implement the S10 AI-client fix (out of scope between sessions).
 - Evidence path: `evidence/S07/check_outputs.txt` (regression); AI-probe output captured in this log.
 - Mentor acceptance or required revision: Infra/safety changes committed; S08 is the next unit.
+
+## Between sessions - SQLite to PostgreSQL switch - 2026-08-19
+
+- Unit ID and date: between-session infrastructure unit, 2026-08-19 (not a session unit; user-directed). Recorded in D015.
+- Student's intended change: Switch all persistence from SQLite to PostgreSQL ahead of a planned Vercel deployment; install Docker locally if not ready.
+- AI assistance used: Claude Code (CLI) - Docker/Colima installation and troubleshooting, repository rewrite on psycopg 3, tests/CI, docs.
+- Environment work actually done: installed Colima 0.10.3 + Docker CLI 29.7.2 + Compose 5.5.0 + qemu via Homebrew; cleared ~7.5 GB of regenerable caches because the Mac disk was 100% full; the default VZ VM failed to boot (empty serial console), so the VM was recreated with `--vm-type qemu`; the VM has no working DNS, so the docker daemon inside the VM was configured to pull images through the host proxy. PostgreSQL 16.15 now runs as `docker compose` service `db` (healthy).
+- Files changed: `docker-compose.yml` (new), `src/ai_music_therapy/config.py` (`database_url`), `src/ai_music_therapy/repository.py` (psycopg 3 rewrite, BIGINT seed), `src/ai_music_therapy/seed_demo.py`, `src/ai_music_therapy/ui/{personas,dashboard,trial}.py`, `tests/test_repository.py` (Postgres-backed, skip-with-message when DB down), `.github/workflows/ci.yml` (postgres service), `requirements.txt` + `pyproject.toml` (psycopg[binary]), `.env.example`, `README.md`, docs (Architecture/DataGovernance/DeploymentRunbook/EnvironmentRecord/decisions/this log), `TASKS.md`/`STATUS.md`/`SESSION_STATE.md` notes.
+- Tests/checks run and actual results: `pytest` 19 passed (Postgres tests ran live); `ruff check src tests scripts` clean; `scripts/smoke_test.py` PASS; seed into PostgreSQL OK (5 personas); Streamlit AppTest shell loads with disclaimers and no exception.
+- Student explanation of one key decision: the repository keeps the exact same tables/constraints/provenance and only the driver changed, so the S08 acceptance criteria still apply unchanged - against PostgreSQL instead of SQLite.
+- Errors or rejected suggestions: VZ runtime boot failure (switched to qemu); first `--runtime qemu` attempt used the wrong flag (it selects docker/containerd; the VM type flag is `--vm-type`); disk-full blocked everything until caches were cleared; `seed INTEGER` overflowed in Postgres (now BIGINT).
+- Deployment caveat stated to the user: Streamlit cannot run on Vercel serverless; realistic path is Render/Railway/Fly/Streamlit Community Cloud + hosted PostgreSQL (Neon/Supabase/Vercel Postgres). The PostgreSQL switch supports all of these.
+- Evidence path: `evidence/infra-postgres/check_outputs.txt`.
+- Mentor acceptance or required revision: Pending mentor acceptance; S08 remains the next unit (executed against PostgreSQL).

@@ -38,7 +38,7 @@ Pre-unit checkpoint: c87c076.
 - [x] S05 - Experiment design and preregistration (complete 2026-08-12; accepted)
 - [x] S06 - Repository contracts, schemas, and tests (complete 2026-08-12; accepted)
 - [x] S07 - Streamlit navigation and interface shell (complete 2026-08-12; accepted)
-- [ ] S08 - SQLite persistence and synthetic fixtures
+- [ ] S08 - persistence and synthetic fixtures (persistence layer switched to PostgreSQL between sessions 2026-08-19; see D015 - S08 proceeds against PostgreSQL, not SQLite)
 - [ ] S09 - Deterministic reference simulator
 - [ ] S10 - OpenAI Responses API and structured outputs
 - [ ] S11 - Persona generation and validation
@@ -52,6 +52,7 @@ Pre-unit checkpoint: c87c076.
 
 ## Known Issues
 - None blocking. Non-blocking observations recorded during audit:
+  - Persistence is PostgreSQL as of 2026-08-19 (between-session infra unit; D015): local DB via `docker compose up -d` (Colima/QEMU VM; daemon proxy configured inside the VM - see EnvironmentRecord notes). If the Colima VM is deleted (`colima delete`), re-apply the docker daemon proxy before pulling images.
   - `config/app_config.toml` is reference/documentation only; the runtime reads configuration from environment variables only (`config.py`). Values are currently consistent but the TOML could drift. Flagged for a future unit; no action required for the audit.
   - The optional AI-mode default model id `gpt-5.6-terra` is a placeholder overridable via `OPENAI_MODEL`; confirm/replace with a valid model id before enabling AI mode.
   - Setup note (resolved): the system `python3` is 3.9.6, below `requires-python = ">=3.11"`. A `.venv` was created from Python 3.13.14 (conda env `vibe-ash`) and the package installed successfully. Future setups must use a Python 3.11+ interpreter.

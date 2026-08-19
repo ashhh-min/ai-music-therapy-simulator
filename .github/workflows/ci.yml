@@ -10,6 +10,21 @@ jobs:
     env:
       # CI must never depend on a live API. Deterministic mode needs no key.
       AI_MUSIC_APP_MODE: deterministic
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mt_simulator_test
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mt_simulator
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

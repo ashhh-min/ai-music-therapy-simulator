@@ -4,7 +4,7 @@ from ai_music_therapy.config import settings
 from ai_music_therapy.repository import Repository
 
 st.title("Synthetic Personas")
-repo = Repository(settings.db_path)
+repo = Repository(settings.database_url)
 repo.initialize()
 personas = repo.list_personas()
 

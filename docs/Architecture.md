@@ -8,12 +8,12 @@
    - deterministic engine for reproducible no-key operation;
    - optional OpenAI Responses API engine with structured outputs and `store=False`.
 4. **Validation boundary**: all AI outputs must validate as `ReactionOutput` before persistence.
-5. **Persistence**: SQLite stores complete JSON payloads and provenance.
+5. **Persistence**: PostgreSQL (local: `docker compose` container) stores complete JSON payloads and provenance.
 6. **Analytics**: pandas and Plotly generate descriptive synthetic-output views.
 
 ## Data flow
 
-`Persona + Music + Scenario -> Engine -> Pydantic Validation -> TrialRecord -> SQLite -> Analytics -> Research Interpretation`
+`Persona + Music + Scenario -> Engine -> Pydantic Validation -> TrialRecord -> PostgreSQL -> Analytics -> Research Interpretation`
 
 ## Failure behavior
 

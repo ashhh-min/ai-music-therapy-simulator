@@ -18,11 +18,11 @@ Use this file when pausing or resuming work.
 6. Continue from the current state; do not regenerate validated modules.
 
 ## Current Resume Record
-- Active unit: S07 accepted and committed (2026-08-12); between-session infra/safety work also committed. Next unit is S08 — activate on resume.
+- Active unit: S07 accepted and committed (2026-08-12); between-session infra/safety work committed 2026-08-12; SQLite-to-PostgreSQL switch committed 2026-08-19 (D015). Next unit is S08 — activate on resume.
 - Last checkpoint: run `git rev-parse --short HEAD` on resume (S07 + infra committed 2026-08-12); prior accepted = c87c076 (S06).
-- Last passing commands: `.venv/bin/python scripts/smoke_test.py` (PASS), `.venv/bin/python -m pytest` (18 passed), `.venv/bin/ruff check src tests scripts` (clean), headless AppTest of the UI shell; see `evidence/S07/check_outputs.txt`.
+- Last passing commands (2026-08-19): `.venv/bin/python scripts/smoke_test.py` (PASS), `.venv/bin/python -m pytest` (19 passed, Postgres-backed repository tests), `.venv/bin/ruff check src tests scripts` (clean), headless AppTest of the UI shell; see `evidence/infra-postgres/check_outputs.txt`.
 - Interpreter: `.venv/bin/python` (Python 3.13.14). System `python3` (3.9.6) is below the required 3.11 and must not be used.
-- To run the UI: `streamlit run app.py` (deterministic by default; seed first with `python -m ai_music_therapy.seed_demo`).
+- To run the UI: start the database first (`colima start` then `docker compose up -d`), then `streamlit run app.py` (deterministic by default; seed with `python -m ai_music_therapy.seed_demo`). If PostgreSQL is down, repository tests skip with a message and DB-backed pages error on use - deterministic simulation still works.
 - Credentials: real key in gitignored `.env.local`; never commit `.env.*` (except `.env.example`).
 - AI mode: NOT yet functional with GLM — deferred to S10 (Responses API vs GLM /chat/completions; also set OPENAI_BASE_URL to the API root). See D014.
-- On resume: `git status` / `git log`, re-read `TASKS.md` + this file + the S08 prompt, re-run smoke + pytest, then activate S08 (SQLite Persistence and Synthetic Fixtures).
+- On resume: `git status` / `git log`, re-read `TASKS.md` + this file + the S08 prompt, re-run smoke + pytest, then activate S08 (persistence and synthetic fixtures - against PostgreSQL per D015, superseding the prompt's SQLite wording).

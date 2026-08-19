@@ -1,0 +1,24 @@
+# Local development database only.
+# The credentials below are local dev defaults (localhost, non-secret) and are
+# safe to commit. Real/production credentials belong in .env.local (gitignored)
+# as DATABASE_URL.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: mt-postgres
+    environment:
+      POSTGRES_DB: mt_simulator
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - mt_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mt_simulator"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  mt_pgdata:

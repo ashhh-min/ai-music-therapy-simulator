@@ -13,7 +13,7 @@ from ai_music_therapy.repository import Repository
 st.title("Run a Synthetic Trial")
 st.caption("The result is a model-generated hypothesis, not a real-world prediction.")
 
-repo = Repository(settings.db_path)
+repo = Repository(settings.database_url)
 repo.initialize()
 personas = repo.list_personas()
 if not personas:

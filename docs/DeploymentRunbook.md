@@ -20,5 +20,5 @@
 ## Recovery
 
 - If AI calls fail, switch to deterministic mode.
-- If the database is corrupted, copy it to evidence, recreate `data/local/app.db`, reseed personas, and rerun accepted synthetic trials only when their design/provenance is available.
+- If the database is corrupted, back it up (`docker compose exec db pg_dump -U postgres mt_simulator`), recreate the container volume (`docker compose down -v && docker compose up -d`), reseed personas, and rerun accepted synthetic trials only when their design/provenance is available.
 - If a unit breaks the demo, reset to the last accepted checkpoint and reapply only the bounded change.

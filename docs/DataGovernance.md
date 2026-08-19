@@ -8,7 +8,7 @@
 - Documentation and prompt templates.
 
 ### Local generated
-- SQLite database.
+- PostgreSQL database (local docker volume; never committed).
 - Batch synthetic outputs.
 - Screenshots and test evidence.
 

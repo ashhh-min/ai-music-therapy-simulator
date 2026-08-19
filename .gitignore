@@ -22,3 +22,4 @@ evidence/*
 !evidence/.gitkeep
 private/
 /private/
+setup_claude_glm52_mac_ark.zsh

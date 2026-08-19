@@ -6,7 +6,7 @@ from ai_music_therapy.config import settings
 from ai_music_therapy.repository import Repository
 
 st.title("Synthetic Trial Dashboard")
-repo = Repository(settings.db_path)
+repo = Repository(settings.database_url)
 repo.initialize()
 trials = repo.list_trials()
 

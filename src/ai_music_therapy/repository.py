@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import sqlite3
-from pathlib import Path
+import psycopg
+from psycopg.rows import dict_row
 
 from .models import Persona, TrialRecord
 
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS trials (
     engine TEXT NOT NULL,
     model_name TEXT,
     prompt_version TEXT NOT NULL,
-    seed INTEGER,
+    seed BIGINT,
     created_at TEXT NOT NULL,
     payload_json TEXT NOT NULL,
     synthetic INTEGER NOT NULL CHECK (synthetic = 1),
@@ -28,65 +28,79 @@ CREATE TABLE IF NOT EXISTS trials (
 
 
 class Repository:
-    def __init__(self, db_path: Path | str):
-        self.db_path = Path(db_path)
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+    """PostgreSQL persistence for synthetic personas and trial records.
 
-    def connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON")
-        return conn
+    Connections are opened lazily per operation so that importing this module
+    (e.g. Streamlit pages at import time) never requires a reachable database.
+    """
+
+    def __init__(self, database_url: str):
+        self.database_url = database_url
+
+    def connect(self) -> psycopg.Connection:
+        return psycopg.connect(self.database_url, row_factory=dict_row)
 
     def initialize(self) -> None:
         with self.connect() as conn:
-            conn.executescript(SCHEMA)
+            with conn.cursor() as cur:
+                cur.execute(SCHEMA)
 
     def upsert_persona(self, persona: Persona) -> None:
         with self.connect() as conn:
-            conn.execute(
-                "INSERT INTO personas(persona_id, payload_json, synthetic) VALUES (?, ?, 1) "
-                "ON CONFLICT(persona_id) DO UPDATE SET payload_json=excluded.payload_json",
-                (persona.persona_id, persona.model_dump_json()),
-            )
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO personas(persona_id, payload_json, synthetic) "
+                    "VALUES (%s, %s, 1) "
+                    "ON CONFLICT(persona_id) DO UPDATE "
+                    "SET payload_json=excluded.payload_json",
+                    (persona.persona_id, persona.model_dump_json()),
+                )
 
     def list_personas(self) -> list[Persona]:
         with self.connect() as conn:
-            rows = conn.execute("SELECT payload_json FROM personas ORDER BY persona_id").fetchall()
+            with conn.cursor() as cur:
+                cur.execute("SELECT payload_json FROM personas ORDER BY persona_id")
+                rows = cur.fetchall()
         return [Persona.model_validate_json(row["payload_json"]) for row in rows]
 
     def get_persona(self, persona_id: str) -> Persona:
         with self.connect() as conn:
-            row = conn.execute(
-                "SELECT payload_json FROM personas WHERE persona_id = ?", (persona_id,)
-            ).fetchone()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT payload_json FROM personas WHERE persona_id = %s",
+                    (persona_id,),
+                )
+                row = cur.fetchone()
         if row is None:
             raise KeyError(f"Unknown persona: {persona_id}")
         return Persona.model_validate_json(row["payload_json"])
 
     def save_trial(self, trial: TrialRecord) -> None:
         with self.connect() as conn:
-            conn.execute(
-                """
-                INSERT INTO trials(
-                    trial_id, persona_id, scene, engine, model_name, prompt_version,
-                    seed, created_at, payload_json, synthetic
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-                """,
-                (
-                    trial.trial_id,
-                    trial.persona_id,
-                    trial.scene,
-                    trial.engine,
-                    trial.model_name,
-                    trial.prompt_version,
-                    trial.seed,
-                    trial.created_at,
-                    trial.model_dump_json(),
-                ),
-            )
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO trials(
+                        trial_id, persona_id, scene, engine, model_name,
+                        prompt_version, seed, created_at, payload_json, synthetic
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                    """,
+                    (
+                        trial.trial_id,
+                        trial.persona_id,
+                        trial.scene,
+                        trial.engine,
+                        trial.model_name,
+                        trial.prompt_version,
+                        trial.seed,
+                        trial.created_at,
+                        trial.model_dump_json(),
+                    ),
+                )
 
     def list_trials(self) -> list[TrialRecord]:
         with self.connect() as conn:
-            rows = conn.execute("SELECT payload_json FROM trials ORDER BY created_at").fetchall()
+            with conn.cursor() as cur:
+                cur.execute("SELECT payload_json FROM trials ORDER BY created_at")
+                rows = cur.fetchall()
         return [TrialRecord.model_validate_json(row["payload_json"]) for row in rows]
