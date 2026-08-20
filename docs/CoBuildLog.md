@@ -169,3 +169,15 @@ For every session, append:
 - Errors or rejected suggestions: rejected `responses.parse` with `text_format=ReactionOutput` because the provider does not enforce the schema server-side (live probes returned extra fields and type drift, which the strict schema rightly rejected); an early grep accidentally echoed part of the API key into the local session transcript - flagged to the user immediately with a rotate recommendation, never written to any file or commit.
 - Evidence path: `evidence/S10/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S11 (Persona Generation and Validation).
+
+## S11 - Persona Generation and Validation - 2026-08-20
+
+- Unit ID and date: S11, 2026-08-20. Accepted same day. Checkpoint before unit: e1565ac.
+- Student's intended change: Add an optional AI-assisted persona drafting workflow that must pass schema, diversity, and human-review gates before acceptance.
+- AI assistance used: Claude Code (CLI) - service design, UI workflow, tests, checklist doc, live verification.
+- Files changed: `src/ai_music_therapy/persona_service.py` (new), `src/ai_music_therapy/ui/personas.py` (review workflow expander), `tests/test_persona_service.py` (new, 12 tests), `docs/persona_review_checklist.md` (new), `evidence/S11/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: test_persona_service 12 passed (repo-gated tests skip cleanly without DB); full suite 193 passed; ruff clean; smoke PASS; `git diff --check` clean; AppTest of the personas page renders with no exception; one live AI draft validated, lint-clean, and verified unsaved.
+- Student explanation of one key decision: gates run again inside `approve_and_save` at save time rather than trusting earlier lint results, and an existing persona_id is refused outright - so "no generated profile overwrites approved fixtures automatically" is enforced by code, not by UI convention.
+- Errors or rejected suggestions: first live draft failed validation (model returned prose for integer sensory fields) - fixed by specifying nested shapes in the prompt; two test fixtures initially tripped the near-duplicate lint themselves and were corrected; one over-complicated skipif snippet was replaced with a plain fixture before landing.
+- Evidence path: `evidence/S11/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S12 (Reaction Simulation and Temporal Sequence).

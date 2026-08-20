@@ -15,11 +15,11 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S10
-Unit focus: OpenAI Responses API and Structured Outputs.
-Current prompt: `prompts/Session_10_OpenAI_Responses_API_and_Structured_Outputs.md`
-Status: Accepted and committed on 2026-08-20 (D019). S11 is the next unit; activate it on resume.
-Acceptance evidence: `evidence/S10/check_outputs.txt`; decision D019.
+Unit code: S11
+Unit focus: Persona Generation and Validation.
+Current prompt: `prompts/Session_11_Persona_Generation_and_Validation.md`
+Status: Accepted and committed on 2026-08-20 (D020). S12 is the next unit; activate it on resume.
+Acceptance evidence: `evidence/S11/check_outputs.txt`; decision D020.
 Pre-unit checkpoint: c87c076.
 
 ## Acceptance Criteria for Current Unit
@@ -41,7 +41,7 @@ Pre-unit checkpoint: c87c076.
 - [x] S08 - persistence and synthetic fixtures (complete 2026-08-20; accepted - executed against PostgreSQL per D015; repository init/persona seed/trial persistence verified by 7 repository tests incl. DB-enforced synthetic-only guard; evidence/S08/check_outputs.txt)
 - [x] S09 - Deterministic reference simulator (complete 2026-08-20; accepted - 154 simulator tests over the full 75-cell matrix prove reproducibility, bounds, complete time stages, and flag conditions; docs/deterministic_model.md states the fictional non-clinical nature; evidence/S09/check_outputs.txt)
 - [x] S10 - OpenAI Responses API and structured outputs (complete 2026-08-20; accepted - Responses API with store=False, json-object format + strict Pydantic validation boundary with sanitizer and one retry; no-key default preserved; 6 mocked tests, no live calls in tests; one live call verified manually; evidence/S10/check_outputs.txt)
-- [ ] S11 - Persona generation and validation
+- [x] S11 - Persona generation and validation (complete 2026-08-20; accepted - AI drafting with schema/diversity/human-review gates, hard lint flags block saves, near-duplicate needs confirmation, existing IDs never overwritten; 12 tests, live draft verified unsaved; evidence/S11/check_outputs.txt)
 - [ ] S12 - Reaction simulation and temporal sequence
 - [ ] S13 - Trial workflow, audit trail, and provenance
 - [ ] S14 - Dashboard I: heatmap and comparisons
@@ -82,7 +82,7 @@ Pre-unit checkpoint: c87c076.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-After S10 is accepted, activate S11 (Persona Generation and Validation) only. Do not begin S11 or any implementation work early.
+After S11 is accepted, activate S12 (Reaction Simulation and Temporal Sequence) only. Do not begin S12 or any implementation work early.
 
 ## Engineering Notes
 - [ ] S18 deployment hardening: replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
