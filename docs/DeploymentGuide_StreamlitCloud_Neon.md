@@ -17,6 +17,13 @@ Why this stack (recorded for transparency):
 
 ## 0. Prerequisites checklist
 
+- [ ] **Deployment hardening (Engineering Notes, TASKS.md):** replace the
+      repository's fresh per-operation connections with a pooled connection
+      manager (connection factory -> pooled engine -> transaction wrapper ->
+      retry/timeout handling -> multi-user simulated deployment test) BEFORE
+      deploying. The per-operation pattern is acceptable only for the local
+      single-user demo (D017 limitation). Add `psycopg_pool` to dependencies
+      as part of this work.
 - [ ] GitHub repository pushed and up to date (`git push origin main`).
 - [ ] Local gates green: `pytest`, `ruff check src tests scripts`,
       `python scripts/smoke_test.py`.
