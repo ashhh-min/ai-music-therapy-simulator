@@ -48,7 +48,7 @@ Pre-unit checkpoint: c87c076.
 - [ ] S15 - Dashboard II: radar, time series, and summaries
 - [ ] S16 - Batch experiment runner and trial matrix
 - [ ] S17 - Analysis, limitations, and research report
-- [ ] S18 - Deployment, demo, portfolio, and release audit
+- [ ] S18 - Deployment, demo, portfolio, and release audit (target stack chosen 2026-08-19: Streamlit Community Cloud + Neon - see D016 and the draft manual docs/DeploymentGuide_StreamlitCloud_Neon.md)
 
 ## Known Issues
 - None blocking. Non-blocking observations recorded during audit:

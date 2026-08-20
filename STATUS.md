@@ -5,6 +5,7 @@
 - Next implementation unit: S08 (persistence and synthetic fixtures, now against PostgreSQL per D015) — not yet started
 - Last accepted checkpoint: see `git log` (S07 + infra committed 2026-08-12; PostgreSQL switch committed 2026-08-19); prior accepted = c87c076 (S06)
 - Persistence: PostgreSQL 16 via `docker compose up -d` (Colima/QEMU local VM); repository on psycopg 3; re-seed with `python -m ai_music_therapy.seed_demo`
+- Deployment target (chosen 2026-08-19, D016): Streamlit Community Cloud + Neon PostgreSQL; draft manual at docs/DeploymentGuide_StreamlitCloud_Neon.md (not yet executed - S18 will deploy)
 - Current blockers: None for deterministic mode. AI mode needs S10 (GLM Responses-API mismatch — see Known Issues / D014).
 - Live API dependency: Optional only (CI explicitly deterministic; AI mode not yet functional with GLM)
 - Offline demo path: Available through deterministic mode (smoke + pytest pass; 19 tests; ruff clean; AppTest shell loads; Postgres tests skip cleanly when the DB is down)
