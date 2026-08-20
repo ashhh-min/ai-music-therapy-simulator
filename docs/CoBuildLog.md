@@ -157,3 +157,15 @@ For every session, append:
 - Errors or rejected suggestions: one test initially assumed the matrix contains high-volume cells; it does not (50 low / 25 medium), so the volume-flag test now constructs its input outside the matrix - a real design fact now recorded in the docs.
 - Evidence path: `evidence/S09/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S10 (OpenAI Responses API and Structured Outputs; includes GLM fixes from D014).
+
+## S10 - OpenAI Responses API and Structured Outputs - 2026-08-20
+
+- Unit ID and date: S10, 2026-08-20. Accepted same day. Checkpoint before unit: c230d52.
+- Student's intended change: Implement the optional AI client with Pydantic structured output, environment-selected model, no-storage setting, and graceful no-key behavior.
+- AI assistance used: Claude Code (CLI) - live provider probing, client redesign, mocked test suite, boundary documentation.
+- Files changed: `src/ai_music_therapy/ai_client.py` (rewritten), `src/ai_music_therapy/config.py` (`openai_base_url`), `tests/test_ai_client.py` (1 -> 6 tests), `docs/ai_boundary.md` (new), `.env.example` (provider compatibility note), `evidence/S10/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: test_ai_client 6 passed (mocked transport; no live calls); full suite 182 passed; ruff clean; smoke PASS; one live end-to-end call via the real client returned a validated ReactionOutput (scores in range, 3 stages, synthetic=True).
+- Student explanation of one key decision: keep the strict Pydantic boundary as the source of truth - the model is asked politely for the exact schema, but the system trusts only validation; out-of-range values are rejected rather than clamped, so no invalid AI output can ever be persisted.
+- Errors or rejected suggestions: rejected `responses.parse` with `text_format=ReactionOutput` because the provider does not enforce the schema server-side (live probes returned extra fields and type drift, which the strict schema rightly rejected); an early grep accidentally echoed part of the API key into the local session transcript - flagged to the user immediately with a rotate recommendation, never written to any file or commit.
+- Evidence path: `evidence/S10/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S11 (Persona Generation and Validation).

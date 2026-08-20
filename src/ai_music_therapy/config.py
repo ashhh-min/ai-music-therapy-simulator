@@ -22,6 +22,10 @@ class Settings:
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
     prompt_version: str = os.getenv("AI_MUSIC_PROMPT_VERSION", "2026-08-01.v1")
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
+    # Optional OpenAI-compatible endpoint (e.g. Volcano Ark, GLM). The OpenAI SDK
+    # also reads OPENAI_BASE_URL from the environment; this makes the setting
+    # explicit and test-injectable.
+    openai_base_url: str | None = os.getenv("OPENAI_BASE_URL")
 
 
 settings = Settings()
