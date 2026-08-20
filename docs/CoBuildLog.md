@@ -145,3 +145,15 @@ For every session, append:
 - Errors or rejected suggestions: two test-authoring iterations (frozen settings dataclass needed `dataclasses.replace` for the seed test; the provenance test initially expected a `synthetic` key inside `payload_json`, but that is a DB column, not a `TrialRecord` field - the test now checks both correctly). Recurring control-doc edit friction: some lines contain Unicode em dashes that defeat literal string matching; edits now anchor on dash-free substrings.
 - Evidence path: `evidence/S08/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S09 (Deterministic Reference Simulator).
+
+## S09 - Deterministic Reference Simulator - 2026-08-20
+
+- Unit ID and date: S09, 2026-08-20. Accepted same day. Checkpoint before unit: 9abc525.
+- Student's intended change: Implement a reproducible bounded rule engine for offline testing and demonstration (the engine existed from the starter; this unit verified and documented it).
+- AI assistance used: Claude Code (CLI) - matrix-parameterized test suite, model documentation, evidence, control docs.
+- Files changed: `tests/test_deterministic_simulator.py` (rewritten: 1 -> 8 test functions / 154 cases), `docs/deterministic_model.md` (new), `evidence/S09/check_outputs.txt` (new), control docs (`TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` D018, this log). No changes to `src/ai_music_therapy/deterministic_simulator.py`.
+- Tests/checks run and actual results: targeted simulator suite 154 passed; full `pytest` 176 passed; `ruff check src tests scripts` clean; `scripts/smoke_test.py` PASS; `git diff --check` clean.
+- Student explanation of one key decision: test the engine against the frozen 75-cell preregistered matrix rather than ad-hoc inputs, so the acceptance guarantees (reproducibility, bounds, complete stages) are proven for exactly the cells the experiment will run.
+- Errors or rejected suggestions: one test initially assumed the matrix contains high-volume cells; it does not (50 low / 25 medium), so the volume-flag test now constructs its input outside the matrix - a real design fact now recorded in the docs.
+- Evidence path: `evidence/S09/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S10 (OpenAI Responses API and Structured Outputs; includes GLM fixes from D014).
