@@ -193,3 +193,15 @@ For every session, append:
 - Errors or rejected suggestions: one leftover artifact expression in the UI dataframe was caught and removed before running; instance-level `model_fields` access raised Pydantic deprecation warnings and was corrected to class-level access.
 - Evidence path: `evidence/S12/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S13 (Trial Workflow, Audit Trail, and Provenance).
+
+## S13 - Trial Workflow, Audit Trail, and Provenance - 2026-08-20
+
+- Unit ID and date: S13, 2026-08-20. Accepted same day. Checkpoint before unit: ba98e75.
+- Student's intended change: Complete trial audit records, filtering, export, and evidence capture for accepted runs.
+- AI assistance used: Claude Code (CLI) - repository filtering/duplicate guard, export module, audit UI, provenance tests and doc.
+- Files changed: `src/ai_music_therapy/repository.py` (duplicate-ID ValueError, `get_trial`, filterable `list_trials`), `src/ai_music_therapy/export.py` (new), `src/ai_music_therapy/ui/trial.py` (audit-trail section), `tests/test_provenance.py` (new, 7 tests), `docs/provenance.md` (new), `evidence/S13/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: test_provenance 7 passed; full suite 205 passed; ruff clean; smoke PASS; `git diff --check` clean; AppTest: audit section renders with both export buttons, provenance inspection works, a live button click saved a trial that appears in the audit table.
+- Student explanation of one key decision: put the synthetic label and limitations text on every CSV row rather than only in a header, so a single copied row can never be mistaken for clinical data.
+- Errors or rejected suggestions: two test-authoring corrections (created_at has a default so it cannot be "missing"; CSV column is model_name not model) and one unused variable removed for lint.
+- Evidence path: `evidence/S13/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S14 (Dashboard I: Heatmap and Comparisons).

@@ -7,6 +7,7 @@ import streamlit as st
 from ai_music_therapy.ai_client import ai_trial
 from ai_music_therapy.config import settings
 from ai_music_therapy.deterministic_simulator import simulate
+from ai_music_therapy.export import trials_to_csv, trials_to_json
 from ai_music_therapy.models import MusicParameters, TrialRecord
 from ai_music_therapy.repository import Repository
 
@@ -110,3 +111,56 @@ if st.button("Run synthetic trial", type="primary"):
             st.json(trial.model_dump())
     except Exception as exc:
         st.error(f"Trial not run and nothing was saved: {exc}")
+
+st.divider()
+st.subheader("Trial audit trail")
+st.caption(
+    "Filter accepted runs and export them with synthetic labels and limitations "
+    "attached. Exports are evidence capture, not clinical data."
+)
+f1, f2, f3 = st.columns(3)
+all_trials = repo.list_trials()
+persona_filter = f1.selectbox(
+    "Persona", ["(all)"] + sorted({t.persona_id for t in all_trials})
+)
+scene_filter = f2.selectbox("Scenario", ["(all)"] + sorted({t.scene for t in all_trials}))
+engine_filter = f3.selectbox("Engine", ["(all)", "deterministic", "openai"])
+
+filtered = repo.list_trials(
+    persona_id=None if persona_filter == "(all)" else persona_filter,
+    scene=None if scene_filter == "(all)" else scene_filter,
+    engine=None if engine_filter == "(all)" else engine_filter,
+)
+
+if not filtered:
+    st.info("No trials match the current filters.")
+else:
+    st.dataframe(
+        {
+            "trial_id": [t.trial_id for t in filtered],
+            "persona": [t.persona_id for t in filtered],
+            "scene": [t.scene for t in filtered],
+            "engine": [t.engine for t in filtered],
+            "model": [t.model_name or "" for t in filtered],
+            "prompt": [t.prompt_version for t in filtered],
+            "seed": [t.seed if t.seed is not None else "" for t in filtered],
+            "created_at": [t.created_at for t in filtered],
+        },
+        hide_index=True,
+    )
+    c_csv, c_json, c_inspect = st.columns(3)
+    c_csv.download_button(
+        "Export CSV (labeled synthetic)",
+        data=trials_to_csv(filtered),
+        file_name="trial_export.csv",
+        mime="text/csv",
+    )
+    c_json.download_button(
+        "Export JSON (full records)",
+        data=trials_to_json(filtered),
+        file_name="trial_export.json",
+        mime="application/json",
+    )
+    chosen = c_inspect.selectbox("Inspect provenance", [t.trial_id for t in filtered])
+    if chosen:
+        st.json(repo.get_trial(chosen).model_dump())

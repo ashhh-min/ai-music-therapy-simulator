@@ -78,29 +78,66 @@ class Repository:
     def save_trial(self, trial: TrialRecord) -> None:
         with self.connect() as conn:
             with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    INSERT INTO trials(
-                        trial_id, persona_id, scene, engine, model_name,
-                        prompt_version, seed, created_at, payload_json, synthetic
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
-                    """,
-                    (
-                        trial.trial_id,
-                        trial.persona_id,
-                        trial.scene,
-                        trial.engine,
-                        trial.model_name,
-                        trial.prompt_version,
-                        trial.seed,
-                        trial.created_at,
-                        trial.model_dump_json(),
-                    ),
-                )
+                try:
+                    cur.execute(
+                        """
+                        INSERT INTO trials(
+                            trial_id, persona_id, scene, engine, model_name,
+                            prompt_version, seed, created_at, payload_json, synthetic
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                        """,
+                        (
+                            trial.trial_id,
+                            trial.persona_id,
+                            trial.scene,
+                            trial.engine,
+                            trial.model_name,
+                            trial.prompt_version,
+                            trial.seed,
+                            trial.created_at,
+                            trial.model_dump_json(),
+                        ),
+                    )
+                except psycopg.errors.UniqueViolation as error:
+                    raise ValueError(
+                        f"Duplicate trial_id {trial.trial_id}: each trial record must "
+                        "have a unique ID; nothing was overwritten"
+                    ) from error
 
-    def list_trials(self) -> list[TrialRecord]:
+    def get_trial(self, trial_id: str) -> TrialRecord:
         with self.connect() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT payload_json FROM trials ORDER BY created_at")
+                cur.execute("SELECT payload_json FROM trials WHERE trial_id = %s", (trial_id,))
+                row = cur.fetchone()
+        if row is None:
+            raise KeyError(f"Unknown trial: {trial_id}")
+        return TrialRecord.model_validate_json(row["payload_json"])
+
+    def list_trials(
+        self,
+        persona_id: str | None = None,
+        scene: str | None = None,
+        engine: str | None = None,
+    ) -> list[TrialRecord]:
+        """List trials, optionally filtered (audit view).
+
+        Filters compose; each is ignored when None.
+        """
+        clauses, params = [], []
+        if persona_id is not None:
+            clauses.append("persona_id = %s")
+            params.append(persona_id)
+        if scene is not None:
+            clauses.append("scene = %s")
+            params.append(scene)
+        if engine is not None:
+            clauses.append("engine = %s")
+            params.append(engine)
+        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+        with self.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    f"SELECT payload_json FROM trials {where} ORDER BY created_at", params
+                )
                 rows = cur.fetchall()
         return [TrialRecord.model_validate_json(row["payload_json"]) for row in rows]
