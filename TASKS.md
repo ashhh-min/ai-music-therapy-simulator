@@ -83,3 +83,7 @@ Pre-unit checkpoint: c87c076.
 
 ## Next Unit Preparation
 After S07 is accepted, activate S08 (SQLite Persistence and Synthetic Fixtures) only. Do not begin S08 or any implementation work early.
+
+## Engineering Notes
+- [ ] S18 deployment hardening: replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
+- [ ] Future control-doc edits: avoid literal matching on prose lines containing Unicode punctuation (em dashes etc.); use stable dash-free anchors, headings, IDs, regex, or structured markers instead.
