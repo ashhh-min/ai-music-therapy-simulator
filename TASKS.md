@@ -38,7 +38,7 @@ Pre-unit checkpoint: c87c076.
 - [x] S05 - Experiment design and preregistration (complete 2026-08-12; accepted)
 - [x] S06 - Repository contracts, schemas, and tests (complete 2026-08-12; accepted)
 - [x] S07 - Streamlit navigation and interface shell (complete 2026-08-12; accepted)
-- [ ] S08 - persistence and synthetic fixtures (persistence layer switched to PostgreSQL between sessions 2026-08-19; see D015 - S08 proceeds against PostgreSQL, not SQLite)
+- [x] S08 - persistence and synthetic fixtures (complete 2026-08-20; accepted - executed against PostgreSQL per D015; repository init/persona seed/trial persistence verified by 7 repository tests incl. DB-enforced synthetic-only guard; evidence/S08/check_outputs.txt)
 - [ ] S09 - Deterministic reference simulator
 - [ ] S10 - OpenAI Responses API and structured outputs
 - [ ] S11 - Persona generation and validation

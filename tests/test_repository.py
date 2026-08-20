@@ -95,3 +95,71 @@ def test_trial_round_trip(repo):
     trials = repo.list_trials()
     assert len(trials) == 1
     assert trials[0] == trial
+
+
+def test_initialize_is_idempotent(repo):
+    repo.initialize()
+    repo.initialize()
+    assert repo.list_personas() == []
+
+
+def test_seed_demo_is_idempotent(repo, monkeypatch, capsys):
+    import dataclasses
+
+    from ai_music_therapy import seed_demo
+
+    monkeypatch.setattr(
+        seed_demo, "settings", dataclasses.replace(seed_demo.settings,
+                                                   database_url=TEST_DATABASE_URL)
+    )
+    seed_demo.main()
+    seed_demo.main()
+    personas = repo.list_personas()
+    assert len(personas) == 5
+    assert len({p.persona_id for p in personas}) == 5
+    assert "5 synthetic personas" in capsys.readouterr().out
+
+
+def test_synthetic_only_guard_is_enforced_by_database(repo):
+    import psycopg
+    import pytest as _pytest
+
+    repo.upsert_persona(_persona())
+    with _pytest.raises(psycopg.errors.CheckViolation):
+        with repo.connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO personas(persona_id, payload_json, synthetic) "
+                    "VALUES ('P-FAKE', '{}', 0)"
+                )
+
+
+def test_persisted_trial_preserves_provenance(repo):
+    import json
+
+    persona = _persona()
+    repo.upsert_persona(persona)
+    trial = _build_trial(persona)
+    trial.trial_id = "T-PROV"
+    repo.save_trial(trial)
+
+    with repo.connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT trial_id, persona_id, scene, engine, model_name, "
+                "prompt_version, seed, created_at, synthetic, payload_json "
+                "FROM trials WHERE trial_id = 'T-PROV'"
+            )
+            row = cur.fetchone()
+
+    payload = json.loads(row["payload_json"])
+    for key in (
+        "trial_id", "persona_id", "scene", "music", "reaction",
+        "engine", "model_name", "prompt_version", "seed", "created_at",
+        "disclaimer",
+    ):
+        assert key in payload, f"missing provenance key: {key}"
+    assert row["synthetic"] == 1
+    assert row["engine"] == trial.engine == payload["engine"]
+    assert row["prompt_version"] == trial.prompt_version == payload["prompt_version"]
+    assert row["seed"] == trial.seed == payload["seed"]

@@ -133,3 +133,15 @@ For every session, append:
 - Deployment caveat stated to the user: Streamlit cannot run on Vercel serverless; realistic path is Render/Railway/Fly/Streamlit Community Cloud + hosted PostgreSQL (Neon/Supabase/Vercel Postgres). The PostgreSQL switch supports all of these.
 - Evidence path: `evidence/infra-postgres/check_outputs.txt`.
 - Mentor acceptance or required revision: Pending mentor acceptance; S08 remains the next unit (executed against PostgreSQL).
+
+## S08 - Persistence and synthetic fixtures (PostgreSQL) - 2026-08-20
+
+- Unit ID and date: S08, 2026-08-20. Accepted same day. Checkpoint before unit: 5c9774b.
+- Student's intended change: Implement repository initialization, persona seed, trial persistence, and round-trip tests (per the S08 prompt, executed against PostgreSQL per D015).
+- AI assistance used: Claude Code (CLI) - baseline verification, four new tests, evidence collection, control-doc updates.
+- Files changed: `tests/test_repository.py` (4 new tests: initialize idempotency, seed_demo end-to-end idempotency, DB-enforced synthetic-only guard, provenance preservation in payload_json), `evidence/S08/check_outputs.txt` (new), control docs (`TASKS.md`, `STATUS.md`, `SESSION_STATE.md`, `docs/decisions.md` D017, this log). No production code changes were needed - the persistence layer from D015 already satisfied the objective.
+- Tests/checks run and actual results: baseline re-run before edits (19 passed); after: `pytest` 23 passed, `ruff check src tests scripts` clean, `scripts/smoke_test.py` PASS, `git diff --check` clean, double `seed_demo` run left exactly 5 personas / 5 distinct ids in `mt_simulator`, `git check-ignore` confirms `data/local/` ignored.
+- Student explanation of one key decision: the synthetic-only guarantee is enforced by a database CHECK constraint (`synthetic = 1`), so no code path - present or future - can persist a record that claims to be non-synthetic; the test proves the database rejects it.
+- Errors or rejected suggestions: two test-authoring iterations (frozen settings dataclass needed `dataclasses.replace` for the seed test; the provenance test initially expected a `synthetic` key inside `payload_json`, but that is a DB column, not a `TrialRecord` field - the test now checks both correctly). Recurring control-doc edit friction: some lines contain Unicode em dashes that defeat literal string matching; edits now anchor on dash-free substrings.
+- Evidence path: `evidence/S08/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S09 (Deterministic Reference Simulator).
