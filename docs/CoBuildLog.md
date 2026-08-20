@@ -181,3 +181,15 @@ For every session, append:
 - Errors or rejected suggestions: first live draft failed validation (model returned prose for integer sensory fields) - fixed by specifying nested shapes in the prompt; two test fixtures initially tripped the near-duplicate lint themselves and were corrected; one over-complicated skipif snippet was replaced with a plain fixture before landing.
 - Evidence path: `evidence/S11/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S12 (Reaction Simulation and Temporal Sequence).
+
+## S12 - Reaction Simulation and Temporal Sequence - 2026-08-20
+
+- Unit ID and date: S12, 2026-08-20. Accepted same day. Checkpoint before unit: 15acd02.
+- Student's intended change: Complete AI/deterministic trial execution with start-middle-end sequence, uncertainty, safety flags, and failure handling.
+- AI assistance used: Claude Code (CLI) - schema validator, provenance helper, trial UI, workflow tests, AppTest verification.
+- Files changed: `src/ai_music_therapy/models.py` (time_series completeness validator), `src/ai_music_therapy/ai_client.py` (`ai_trial` provenance helper), `src/ai_music_therapy/ui/trial.py` (sequence/uncertainty/safety display, explicit not-saved failure message), `tests/test_trial_workflow.py` (new, 6 tests), `evidence/S12/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: test_trial_workflow 6 passed; full suite 198 passed (0 warnings after fixing a Pydantic deprecation in the new test); ruff clean; smoke PASS; AppTest: page renders, button click executes a deterministic trial end-to-end and saves it, uncertainty + temporal section + provenance expander all present.
+- Student explanation of one key decision: enforce the start/middle/end contract inside the Pydantic schema rather than in UI code, so every engine - deterministic, AI, or future - is structurally unable to persist an incomplete or out-of-order temporal sequence.
+- Errors or rejected suggestions: one leftover artifact expression in the UI dataframe was caught and removed before running; instance-level `model_fields` access raised Pydantic deprecation warnings and was corrected to class-level access.
+- Evidence path: `evidence/S12/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S13 (Trial Workflow, Audit Trail, and Provenance).

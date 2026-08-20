@@ -116,6 +116,17 @@ class ReactionOutput(BaseModel):
     safety_flags: list[str] = []
     synthetic: Literal[True] = True
 
+    @field_validator("time_series")
+    @classmethod
+    def time_series_complete(cls, value: list[TimeStage]) -> list[TimeStage]:
+        """A reaction must carry exactly one start, middle, and end stage, in order."""
+        stages = [stage.stage for stage in value]
+        if stages != ["start", "middle", "end"]:
+            raise ValueError(
+                f"time_series must be exactly ['start', 'middle', 'end'], got {stages}"
+            )
+        return value
+
 
 class TrialRecord(BaseModel):
     """One synthetic trial with full provenance.

@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import streamlit as st
 
-from ai_music_therapy.ai_client import simulate_with_openai
+from ai_music_therapy.ai_client import ai_trial
 from ai_music_therapy.config import settings
 from ai_music_therapy.deterministic_simulator import simulate
 from ai_music_therapy.models import MusicParameters, TrialRecord
@@ -63,9 +63,8 @@ if st.button("Run synthetic trial", type="primary"):
             reaction, seed = simulate(persona, music, scene)
             model_name = None
         else:
-            reaction = simulate_with_openai(persona, music, scene)
+            reaction, model_name = ai_trial(persona, music, scene)
             seed = None
-            model_name = settings.openai_model
 
         trial = TrialRecord(
             trial_id=f"T-{uuid4().hex[:12].upper()}",
@@ -80,15 +79,34 @@ if st.button("Run synthetic trial", type="primary"):
         )
         repo.save_trial(trial)
         st.success(f"Saved {trial.trial_id}")
-        st.metric("Anxiety", reaction.anxiety_level)
-        st.metric("Engagement", reaction.engagement_level)
-        st.metric("Regulation", reaction.regulation_score)
-        st.json(trial.model_dump())
+
+        if reaction.safety_flags:
+            st.warning("Stop-condition / safety flags: " + " | ".join(reaction.safety_flags))
+        st.info(f"Uncertainty: {reaction.uncertainty_note}")
+
+        st.subheader("Scores")
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Anxiety", reaction.anxiety_level)
+        m2.metric("Engagement", reaction.engagement_level)
+        m3.metric("Mood", reaction.mood_score)
+        m4.metric("Regulation", reaction.regulation_score)
+
+        st.subheader("Temporal sequence (start - middle - end)")
+        st.dataframe(
+            {
+                "Stage": [s.stage for s in reaction.time_series],
+                "Anxiety": [s.anxiety_level for s in reaction.time_series],
+                "Engagement": [s.engagement_level for s in reaction.time_series],
+                "Observation": [s.observation for s in reaction.time_series],
+            },
+            hide_index=True,
+        )
+
         st.caption(
             "Synthetic result only: not a clinical prediction or treatment "
             "recommendation."
         )
-        if reaction.safety_flags:
-            st.warning("  •  ".join(reaction.safety_flags))
+        with st.expander("Full trial record (provenance JSON)"):
+            st.json(trial.model_dump())
     except Exception as exc:
-        st.error(str(exc))
+        st.error(f"Trial not run and nothing was saved: {exc}")

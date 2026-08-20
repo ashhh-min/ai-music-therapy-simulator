@@ -97,3 +97,14 @@ def simulate_with_openai(persona: Persona, music: MusicParameters, scene: str) -
             last_error = error
             feedback = str(error)[:2000]
     raise RuntimeError(f"AI output failed validation after retry; rejecting: {last_error}")
+
+
+def ai_trial(
+    persona: Persona, music: MusicParameters, scene: str
+) -> tuple[ReactionOutput, str | None]:
+    """Run one AI trial and return the validated reaction plus provenance model name.
+
+    Centralizes the provenance contract used by the trial workflow: AI trials
+    record the configured model name and no seed (AI output is not reproducible).
+    """
+    return simulate_with_openai(persona, music, scene), settings.openai_model
