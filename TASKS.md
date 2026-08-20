@@ -15,18 +15,22 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S14
-Unit focus: Dashboard I: Heatmap and Comparisons.
-Current prompt: `prompts/Session_14_Dashboard_I_Heatmap_and_Comparisons.md`
-Status: Accepted and committed on 2026-08-20 (D023). S15 is the next unit; activate it on resume.
-Acceptance evidence: `evidence/S14/check_outputs.txt`; decision D023.
-Pre-unit checkpoint: c87c076.
+Unit code: S15
+Unit focus: Dashboard II: Radar, Time Series, and Summaries.
+Current prompt: `prompts/Session_15_Dashboard_II_Radar_Time_Series_and_Summaries.md`
+Status: Implemented 2026-08-20 pending mentor acceptance; all gates green; evidence saved; committed.
+Acceptance evidence: `evidence/S15/check_outputs.txt`; decision D024.
+Pre-unit checkpoint: 91fa7f2.
 
 ## Acceptance Criteria for Current Unit
-- All pages load with useful empty states (AppTest-verified): YES.
-- Disclaimer visible on Home and trial/results surfaces (plus global sidebar): YES.
-- No future analytics or AI logic implemented early (existing logic preserved): YES.
-- py_compile + ruff clean; smoke + pytest pass (18); `git diff --check` clean.
+- All requested baseline visualization types are represented (radar profile, temporal
+  stage lines, descriptive rankings with n_trials, uncertainty notes, PNG + CSV figure
+  export) or explicitly documented: YES (all implemented; chart reading guide at
+  `docs/chart_interpretation.md`).
+- Rankings are descriptive only and always show trial counts plus engine labels: YES.
+- No chart title or caption implies treatment effectiveness: YES (guarded by
+  `test_dashboard_titles_do_not_imply_effectiveness`).
+- pytest (213) + ruff + smoke pass; `git diff --check` clean; AppTest verified.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -45,7 +49,7 @@ Pre-unit checkpoint: c87c076.
 - [x] S12 - Reaction simulation and temporal sequence (complete 2026-08-20; accepted - schema-enforced start/middle/end sequence, ai_trial provenance helper, uncertainty/safety/sequence visible in trial UI, refused AI output never persisted; 6 workflow tests + AppTest end-to-end; evidence/S12/check_outputs.txt)
 - [x] S13 - Trial workflow, audit trail, and provenance (complete 2026-08-20; accepted - filterable audit trail + provenance inspection in UI, labeled CSV/JSON export (synthetic + limitations on every row), duplicate IDs rejected without overwrite, incomplete records impossible; 7 tests; evidence/S13/check_outputs.txt)
 - [x] S14 - Dashboard I: heatmap and comparisons (complete 2026-08-20; accepted - stored-trial heatmap (never imputed), same-music/different-persona comparisons with n_trials + engine labels, empty states + per-chart non-clinical captions; 5 analytics tests + AppTest; evidence/S14/check_outputs.txt)
-- [ ] S15 - Dashboard II: radar, time series, and summaries
+- [x] S15 - Dashboard II: radar, time series, and summaries (complete 2026-08-20; pending mentor acceptance - six-dimension radar profile (calm/engagement/mood/regulation/attention/stability), temporal stage means, descriptive rankings with n_trials + engines, per-trial uncertainty notes, PNG camera icon + CSV data export; chart guide in docs/chart_interpretation.md; 4 new analytics tests + title-language guard; AppTest verified; evidence/S15/check_outputs.txt)
 - [ ] S16 - Batch experiment runner and trial matrix
 - [ ] S17 - Analysis, limitations, and research report
 - [ ] S18 - Deployment, demo, portfolio, and release audit (target stack chosen 2026-08-19: Streamlit Community Cloud + Neon - see D016 and the draft manual docs/DeploymentGuide_StreamlitCloud_Neon.md)
@@ -82,7 +86,7 @@ Pre-unit checkpoint: c87c076.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-After S14 is accepted, activate S15 (Dashboard II: Radar, Time Series, and Summaries) only. Do not begin S15 or any implementation work early.
+After S15 is accepted, activate S16 (Batch Experiment Runner and Trial Matrix) only. Do not begin S15 or any implementation work early.
 
 ## Engineering Notes
 - [ ] S18 deployment hardening: replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).

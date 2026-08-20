@@ -110,3 +110,95 @@ def same_music_comparisons(trials: list[TrialRecord]) -> dict[str, pd.DataFrame]
             )
         comparisons[signature] = pd.DataFrame(rows)
     return comparisons
+
+
+DIMENSIONS = ("calm", "engagement", "mood", "regulation", "attention", "stability")
+
+
+def _attention_ratio(trial: TrialRecord) -> float:
+    """Attended fraction of the configured trial duration."""
+    duration = trial.music.duration_sec
+    if duration <= 0:
+        return 0.0
+    return min(1.0, trial.reaction.attention_duration_sec / duration)
+
+
+def _stability(trial: TrialRecord) -> float:
+    """Inverse of the anxiety change magnitude across the temporal sequence.
+
+    1.0 = anxiety identical at start and end; 0.0 = maximum swing (9 points).
+    A descriptive software signal about the simulated trajectory shape.
+    """
+    stages = {s.stage: s for s in trial.reaction.time_series}
+    change = abs(stages["end"].anxiety_level - stages["start"].anxiety_level)
+    return 1.0 - change / 9.0
+
+
+def dimension_scores(trial: TrialRecord) -> dict[str, float]:
+    """Six researcher-defined descriptive dimensions, each normalized to [0, 1].
+
+    Not clinical measures; see docs/chart_interpretation.md.
+    """
+    r = trial.reaction
+    return {
+        "calm": (10 - r.anxiety_level) / 9,
+        "engagement": (r.engagement_level - 1) / 9,
+        "mood": (r.mood_score - 1) / 9,
+        "regulation": (r.regulation_score - 1) / 9,
+        "attention": _attention_ratio(trial),
+        "stability": _stability(trial),
+    }
+
+
+def dimension_profile(trials: list[TrialRecord]) -> pd.DataFrame:
+    """Mean six-dimension profile across trials, with counts and engine labels."""
+    rows = [
+        {**dimension_scores(t), "engine": t.engine, "persona_id": t.persona_id}
+        for t in trials
+    ]
+    frame = pd.DataFrame(rows)
+    profile = {
+        dimension: round(frame[dimension].mean(), 4) for dimension in DIMENSIONS
+    }
+    profile["n_trials"] = len(trials)
+    profile["engines"] = "+".join(sorted(frame["engine"].unique()))
+    return pd.DataFrame([profile])
+
+
+def temporal_stage_frame(trials: list[TrialRecord]) -> pd.DataFrame:
+    """Flatten stored start/middle/end sequences into one row per stage."""
+    rows = []
+    for trial in trials:
+        for index, stage in enumerate(trial.reaction.time_series):
+            rows.append(
+                {
+                    "trial_id": trial.trial_id,
+                    "persona_id": trial.persona_id,
+                    "scene": trial.scene,
+                    "engine": trial.engine,
+                    "stage": stage.stage,
+                    "stage_index": index,
+                    "anxiety_level": stage.anxiety_level,
+                    "engagement_level": stage.engagement_level,
+                    "observation": stage.observation,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def descriptive_rankings(trials: list[TrialRecord]) -> pd.DataFrame:
+    """Rank personas by mean composite score. Descriptive only; counts always shown."""
+    rows = []
+    for persona_id in sorted({t.persona_id for t in trials}):
+        subset = [t for t in trials if t.persona_id == persona_id]
+        scores = [composite_score(t) for t in subset]
+        rows.append(
+            {
+                "persona_id": persona_id,
+                "mean_composite": round(sum(scores) / len(scores), 4),
+                "n_trials": len(subset),
+                "engines": "+".join(sorted({t.engine for t in subset})),
+            }
+        )
+    frame = pd.DataFrame(rows)
+    return frame.sort_values("mean_composite", ascending=False).reset_index(drop=True)

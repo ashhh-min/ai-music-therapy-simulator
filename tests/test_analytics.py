@@ -105,3 +105,62 @@ def test_same_music_comparison_empty_when_no_shared_music():
         _trial("P-B", _music(bpm=90), "sleep_support", trial_id="T-2"),
     ]
     assert same_music_comparisons(trials) == {}
+
+
+def test_dimension_profile_has_six_bounded_dimensions():
+    from ai_music_therapy.analytics import DIMENSIONS, dimension_profile, dimension_scores
+
+    trial = _trial("P-A", _music(), "sleep_support", trial_id="T-1")
+    scores = dimension_scores(trial)
+    assert tuple(scores) == DIMENSIONS
+    assert len(DIMENSIONS) == 6
+    assert all(0 <= value <= 1 for value in scores.values())
+
+    profile = dimension_profile([trial, trial])
+    assert int(profile["n_trials"].iloc[0]) == 2
+    assert profile["engines"].iloc[0] == "deterministic"
+    for dimension in DIMENSIONS:
+        assert 0 <= float(profile[dimension].iloc[0]) <= 1
+
+
+def test_temporal_stage_frame_has_ordered_stages_per_trial():
+    from ai_music_therapy.analytics import temporal_stage_frame
+
+    trials = [
+        _trial("P-A", _music(), "sleep_support", trial_id="T-1"),
+        _trial("P-B", _music(), "focus_support", engine="openai", trial_id="T-2"),
+    ]
+    frame = temporal_stage_frame(trials)
+    assert len(frame) == 6  # three stages per trial
+    for trial_id in ("T-1", "T-2"):
+        subset = frame[frame.trial_id == trial_id]
+        assert list(subset["stage"]) == ["start", "middle", "end"]
+        assert list(subset["stage_index"]) == [0, 1, 2]
+        assert set(subset["observation"])
+    assert set(frame["engine"]) == {"deterministic", "openai"}
+
+
+def test_descriptive_rankings_sorted_with_counts_and_engines():
+    from ai_music_therapy.analytics import composite_score, descriptive_rankings
+
+    trial_a1 = _trial("P-A", _music(), "sleep_support", trial_id="T-1")
+    trial_a2 = _trial("P-A", _music(bpm=90), "sleep_support", engine="openai", trial_id="T-2")
+    trial_b = _trial("P-B", _music(), "sleep_support", trial_id="T-3")
+    mean_a = (composite_score(trial_a1) + composite_score(trial_a2)) / 2
+    rankings = descriptive_rankings([trial_a1, trial_a2, trial_b])
+    assert list(rankings["persona_id"]) == sorted(
+        ["P-A", "P-B"], key=lambda p: -(mean_a if p == "P-A" else composite_score(trial_b))
+    )
+    by_persona = rankings.set_index("persona_id")
+    assert by_persona.loc["P-A", "n_trials"] == 2
+    assert by_persona.loc["P-A", "engines"] == "deterministic+openai"
+    assert by_persona.loc["P-B", "n_trials"] == 1
+    means = list(rankings["mean_composite"])
+    assert means == sorted(means, reverse=True)
+
+
+def test_dashboard_titles_do_not_imply_effectiveness():
+    source = Path("src/ai_music_therapy/ui/dashboard.py").read_text(encoding="utf-8")
+    lowered = source.lower()
+    for phrase in ("effective", "treatment outcome", "efficacy of", "improves"):
+        assert phrase not in lowered, f"title/caption language implies effectiveness: {phrase}"

@@ -217,3 +217,13 @@ For every session, append:
 - Errors or rejected suggestions: one f-string lint fix; AppTest assertion adjusted (AppTest has no plotly_chart accessor - presence verified via sections/captions/dataframe instead). Observed non-blocking Streamlit deprecation warnings for `use_container_width` (pre-existing pattern across pages; flagged for a future unit, not fixed here to keep the diff scoped).
 - Evidence path: `evidence/S14/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S15 (Dashboard II: Radar, Time Series, and Summaries).
+
+## S15 - Dashboard II: Radar, Time Series, and Summaries (2026-08-20)
+
+- What changed: `src/ai_music_therapy/analytics.py` gained `dimension_scores` / `dimension_profile` (six researcher-defined [0,1] dimensions: calm, engagement, mood, regulation, attention, stability), `temporal_stage_frame` (flattens stored start/middle/end sequences), and `descriptive_rankings` (persona means sorted desc, always with n_trials + engine labels). `src/ai_music_therapy/ui/dashboard.py` added radar, temporal stage lines, rankings table, uncertainty/provenance section, and export buttons (plotly PNG camera config on every chart + CSV downloads of radar/stage/ranking data). New `docs/chart_interpretation.md`; `tests/test_analytics.py` 5 -> 10 tests.
+- Files changed: `src/ai_music_therapy/analytics.py`, `src/ai_music_therapy/ui/dashboard.py`, `tests/test_analytics.py`, `docs/chart_interpretation.md` (new), `evidence/S15/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: full suite 213 passed; ruff clean; smoke PASS; `git diff --check` clean; AppTest (dev DB, 8 trials): 8 subheaders rendered, radar-persona selectbox present, page warning present, no exceptions.
+- Student explanation of one key decision: the radar's sixth dimension ("stability") is computed from the stored start-to-end anxiety change rather than invented as a new AI field, so the profile stays fully derivable from persisted, attributable trials instead of adding a second unverifiable signal source.
+- Errors or rejected suggestions: none blocking. AppTest again has no plotly accessor, so radar/temporal views were verified via subheaders, selectboxes, and captions; the new title-language guard test covers the effectiveness wording rule mechanically. The pre-existing `use_container_width` deprecation warnings remain (pattern shared across pages; deferred as before).
+- Evidence path: `evidence/S15/check_outputs.txt`.
+- Mentor acceptance or required revision: unit complete pending mentor sign-off per workflow. Next unit: S16 (Batch Experiment Runner and Trial Matrix).
