@@ -15,11 +15,11 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S07
-Unit focus: Streamlit Navigation and Interface Shell (UI).
-Current prompt: `prompts/Session_07_Streamlit_Navigation_and_Interface_Shell.md`
-Status: Accepted and committed on 2026-08-12. S08 is the next unit; activate it on resume.
-Acceptance evidence: `evidence/S07/summary.md`, `evidence/S07/check_outputs.txt`.
+Unit code: S08
+Unit focus: Persistence and Synthetic Fixtures (executed on PostgreSQL per D015).
+Current prompt: `prompts/Session_08_SQLite_Persistence_and_Synthetic_Fixtures.md` (SQLite wording superseded by D015/D017)
+Status: Accepted and committed on 2026-08-20. S09 is the next unit; activate it on resume.
+Acceptance evidence: `evidence/S08/check_outputs.txt`; decision D017.
 Pre-unit checkpoint: c87c076.
 
 ## Acceptance Criteria for Current Unit
