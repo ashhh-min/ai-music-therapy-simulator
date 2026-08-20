@@ -205,3 +205,15 @@ For every session, append:
 - Errors or rejected suggestions: two test-authoring corrections (created_at has a default so it cannot be "missing"; CSV column is model_name not model) and one unused variable removed for lint.
 - Evidence path: `evidence/S13/check_outputs.txt`.
 - Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S14 (Dashboard I: Heatmap and Comparisons).
+
+## S14 - Dashboard I: Heatmap and Comparisons - 2026-08-20
+
+- Unit ID and date: S14, 2026-08-20. Accepted same day. Checkpoint before unit: b1ede55.
+- Student's intended change: Implement persona-scenario heatmaps and same-music/different-persona comparisons with empty-state handling.
+- AI assistance used: Claude Code (CLI) - analytics functions, dashboard restructure, tests, AppTest verification.
+- Files changed: `src/ai_music_therapy/analytics.py` (composite_heatmap, music_signature, same_music_comparisons), `src/ai_music_therapy/ui/dashboard.py` (three sections, empty states, per-chart captions), `tests/test_analytics.py` (1 -> 5 tests), `evidence/S14/check_outputs.txt` (new), control docs.
+- Tests/checks run and actual results: test_analytics 5 passed; full suite 209 passed; ruff clean; smoke PASS; AppTest: dashboard renders 3 sections with 3 non-clinical captions, never-imputed note, comparison selectbox + dataframe, page warning.
+- Student explanation of one key decision: comparisons carry n_trials and engine labels in the table itself and in the chart (text = n, hover = engines), because a mean without its sample size and engine provenance invites being read as an efficacy claim.
+- Errors or rejected suggestions: one f-string lint fix; AppTest assertion adjusted (AppTest has no plotly_chart accessor - presence verified via sections/captions/dataframe instead). Observed non-blocking Streamlit deprecation warnings for `use_container_width` (pre-existing pattern across pages; flagged for a future unit, not fixed here to keep the diff scoped).
+- Evidence path: `evidence/S14/check_outputs.txt`.
+- Mentor acceptance or required revision: Student accepted and approved resumption before the unit; unit complete pending mentor sign-off per workflow. Next unit: S15 (Dashboard II: Radar, Time Series, and Summaries).
