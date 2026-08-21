@@ -1,14 +1,14 @@
 # Project Status
 
 - Package state: Prepared starter, installed editable in a Python 3.13.14 `.venv`
-- Active control step: S16 implemented 2026-08-21 (pending mentor acceptance); next unit S17
-- Next implementation unit: S17 (Analysis, Limitations, and Research Report) - not yet started
+- Active control step: S17 implemented 2026-08-21 (pending mentor acceptance); next unit S18
+- Next implementation unit: S18 (Deployment, Demo, Portfolio, and Release Audit) - not yet started; pooled-connection hardening is the prerequisite before Neon (see docs/DeploymentGuide_StreamlitCloud_Neon.md)
 - Last accepted checkpoint: see `git log` (S07 + infra committed 2026-08-12; PostgreSQL switch committed 2026-08-19); prior accepted = c87c076 (S06)
 - Persistence: PostgreSQL 16 via `docker compose up -d` (Colima/QEMU local VM); repository on psycopg 3; re-seed with `python -m ai_music_therapy.seed_demo`
 - Deployment target (chosen 2026-08-19, D016): Streamlit Community Cloud + Neon PostgreSQL; draft manual at docs/DeploymentGuide_StreamlitCloud_Neon.md (not yet executed - S18 will deploy)
 - Current blockers: None. AI mode functional (D019): Responses API + store=False on the Volcano Ark endpoint; strict validation boundary; deterministic default unchanged.
 - Live API dependency: Optional only (CI explicitly deterministic; AI mode verified live 2026-08-20 with the Ark provider)
-- Offline demo path: Available through deterministic mode (smoke + pytest pass; 227 tests; batch runner executes the frozen 75-cell matrix with no key and exports an immutable synthetic-labeled bundle (D025); dashboard radar/temporal/rankings/uncertainty/export (D024); heatmap + same-music comparisons with counts/engines (D023); audit trail + labeled export live (D022); trial UI shows uncertainty/safety/sequence (D021); persona drafting gated by schema/lint/human review (D020); ruff clean; AppTest shell loads; Postgres tests skip cleanly when the DB is down)
+- Offline demo path: Available through deterministic mode (smoke + pytest pass; 227 tests; research report + analysis notebook + limitations complete from immutable batch bundles, all descriptive and synthetic-labeled (D026); batch runner executes the frozen 75-cell matrix with no key (D025);
 - Credentials: real key lives in gitignored `.env.local`; `.env`/`.env.*` ignored (except `.env.example`); config.py loads `.env.local`
 - UI shell: multipage navigation + global disclaimer + empty states (AppTest-verified); see `app.py` and `src/ai_music_therapy/ui/`
 - Contracts: extra=forbid on all data models; matrix + ontology guarded by tests; ruff gate green

@@ -15,24 +15,24 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S16
-Unit focus: Batch Experiment Runner and Trial Matrix.
-Current prompt: `prompts/Session_16_Batch_Experiment_Runner_and_Trial_Matrix.md`
-Status: Implemented 2026-08-21 pending mentor acceptance; official 75-cell deterministic run completed and exported immutably; gates green; evidence saved.
-Acceptance evidence: `evidence/S16/check_outputs.txt`; decision D025.
-Pre-unit checkpoint: 678fe0d.
+Unit code: S17
+Unit focus: Analysis, Limitations, and Research Report.
+Current prompt: `prompts/Session_17_Analysis_Limitations_and_Research_Report.md`
+Status: Implemented 2026-08-21 pending mentor acceptance; documentation-only unit; all three docs written from the immutable batch bundles; gates and file/link validation green; evidence saved.
+Acceptance evidence: `evidence/S17/check_outputs.txt`; decision D026.
+Pre-unit checkpoint: 203f287.
 
 ## Acceptance Criteria for Current Unit
-- Exactly 75 accepted deterministic cells are produced once the matrix is run: YES
-  (official run `data/local/batch_runs/20260821T053515Z-e5f50132`, sha e5f50132...).
-- Missing/duplicate cells fail validation: YES (matrix and result validators; 6
-  negative tests).
-- Outputs are versioned and labeled synthetic; no finding is written yet: YES
-  (timestamp+checksum run id, synthetic+limitations on every CSV row and JSON
-  document, manifest with `findings: null`).
-- Deterministic no-key operation preserved: YES (default run needs no key;
-  `--ai-subset` requires a key and fails fast with a clear message).
-- pytest (227) + ruff + smoke pass; `git diff --check` clean.
+- Claims stay inside the preregistered analysis plan: YES (descriptive only; no
+  inferential statistics, no causal or clinical language; notebook/report follow
+  `docs/analysis_plan.md` measures and comparisons).
+- Software observations are separated from clinical evidence: YES (report section
+  4A deterministic software behavior vs 4B model-generated content; standing notices).
+- Limitations cover persona validity, model dependence, prompt sensitivity, and no
+  human participants: YES (`docs/limitations.md` sections 1-4, plus coverage,
+  reporting, and infrastructure limits).
+- pytest (227) + ruff + smoke pass; referenced files/links validated (20 paths,
+  all exist); `git diff --check` clean.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -52,8 +52,8 @@ Pre-unit checkpoint: 678fe0d.
 - [x] S13 - Trial workflow, audit trail, and provenance (complete 2026-08-20; accepted - filterable audit trail + provenance inspection in UI, labeled CSV/JSON export (synthetic + limitations on every row), duplicate IDs rejected without overwrite, incomplete records impossible; 7 tests; evidence/S13/check_outputs.txt)
 - [x] S14 - Dashboard I: heatmap and comparisons (complete 2026-08-20; accepted - stored-trial heatmap (never imputed), same-music/different-persona comparisons with n_trials + engine labels, empty states + per-chart non-clinical captions; 5 analytics tests + AppTest; evidence/S14/check_outputs.txt)
 - [x] S15 - Dashboard II: radar, time series, and summaries (complete 2026-08-20; accepted - six-dimension radar profile (calm/engagement/mood/regulation/attention/stability), temporal stage means, descriptive rankings with n_trials + engines, per-trial uncertainty notes, PNG camera icon + CSV data export; chart guide in docs/chart_interpretation.md; 4 new analytics tests + title-language guard; AppTest verified; evidence/S15/check_outputs.txt)
-- [x] S16 - Batch experiment runner and trial matrix (complete 2026-08-21; pending mentor acceptance - `scripts/run_batch.py` runs the frozen 75-cell matrix from `config/trial_matrix.csv` (single source of truth), validates matrix+completeness (missing/duplicate/extra cells fail), exports an immutable synthetic-labeled run bundle (trials.csv/json + manifest with matrix sha256 and findings: null) under data/local/batch_runs/; optional `--ai-subset N` (key-gated, live-verified 1 cell via Ark); 14 new tests; official run: 75/75 cells; evidence/S16/check_outputs.txt)
-- [ ] S17 - Analysis, limitations, and research report
+- [x] S16 - Batch experiment runner and trial matrix (complete 2026-08-21; accepted - `scripts/run_batch.py` runs the frozen 75-cell matrix from `config/trial_matrix.csv` (single source of truth), validates matrix+completeness (missing/duplicate/extra cells fail), exports an immutable synthetic-labeled run bundle (trials.csv/json + manifest with matrix sha256 and findings: null) under data/local/batch_runs/; optional `--ai-subset N` (key-gated, live-verified 1 cell via Ark); 14 new tests; official run: 75/75 cells; evidence/S16/check_outputs.txt)
+- [x] S17 - Analysis, limitations, and research report (complete 2026-08-21; pending mentor acceptance - docs/analysis_notebook.md (full 75-cell table, persona/scenario/variant summaries, H1-H4 probes, 0 safety flags, engine stability incl. 5 matched AI cells + 3-sample same-cell variance probe), docs/limitations.md (persona validity, model dependence incl. 3-provider history, prompt sensitivity, no human participants + coverage limits), docs/ResearchReport.md (separates 4A software behavior from 4B model content); new AI comparison bundle ai-comparison-20260821 (75 det + 5 AI via qwen3.8-max); evidence/S17/check_outputs.txt)
 - [ ] S18 - Deployment, demo, portfolio, and release audit (target stack chosen 2026-08-19: Streamlit Community Cloud + Neon - see D016 and the draft manual docs/DeploymentGuide_StreamlitCloud_Neon.md)
 
 ## Known Issues
@@ -88,7 +88,7 @@ Pre-unit checkpoint: 678fe0d.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-After S16 is accepted, activate S17 (Analysis, Limitations, and Research Report) only. Do not begin S15 or any implementation work early.
+After S17 is accepted, activate S18 (Deployment, Demo, Portfolio, and Release Audit) only. Do not begin S15 or any implementation work early.
 
 ## Engineering Notes
 - [ ] S18 deployment hardening: replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
