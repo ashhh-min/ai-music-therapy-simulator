@@ -23,7 +23,7 @@ if not trials:
     st.stop()
 
 frame = trials_to_frame(trials)
-st.dataframe(frame, use_container_width=True)
+st.dataframe(frame, width="stretch")
 
 st.subheader("Persona x scenario heatmap (mean composite index)")
 heat = composite_heatmap(trials)
@@ -37,7 +37,7 @@ else:
             aspect="auto",
             title="Descriptive Composite Index (mean per persona x scenario)",
         ),
-        use_container_width=True,
+        width="stretch",
         config={"toImageButtonOptions": {"format": "png", "filename": "composite_heatmap"}},
     )
     st.caption(NON_CLINICAL_NOTICE)
@@ -58,7 +58,7 @@ else:
         "Music configuration (shared by 2+ personas)", list(comparisons)
     )
     comparison = comparisons[selected_signature]
-    st.dataframe(comparison, hide_index=True, use_container_width=True)
+    st.dataframe(comparison, hide_index=True, width="stretch")
     st.caption(
         "Each row keeps its sample count (n_trials) and engine labels so the "
         "comparison stays attributable."
@@ -73,7 +73,7 @@ else:
             hover_data=["engines"],
             title=f"Mean composite under identical music: {selected_signature}",
         ),
-        use_container_width=True,
+        width="stretch",
         config={"toImageButtonOptions": {"format": "png", "filename": "same_music_comparison"}},
     )
     st.caption(NON_CLINICAL_NOTICE)
@@ -100,7 +100,7 @@ st.plotly_chart(
         line_close=True,
         range_r=[0, 1],
     ),
-    use_container_width=True,
+    width="stretch",
     config={"toImageButtonOptions": {"format": "png", "filename": "dimension_profile"}},
 )
 st.caption(
@@ -128,7 +128,7 @@ st.plotly_chart(
         markers=True,
         labels={"value": "mean level (1 to 10)", "stage": "stage"},
     ),
-    use_container_width=True,
+    width="stretch",
     config={"toImageButtonOptions": {"format": "png", "filename": "temporal_stages"}},
 )
 st.caption(
@@ -139,7 +139,7 @@ st.caption(
 st.subheader("Descriptive rankings by persona")
 st.caption(NON_CLINICAL_NOTICE)
 rankings = analytics.descriptive_rankings(trials)
-st.dataframe(rankings, hide_index=True, use_container_width=True)
+st.dataframe(rankings, hide_index=True, width="stretch")
 st.caption(
     "Sorted by mean composite index. Ranking position reflects stored synthetic "
     "trials only; personas differ by design, so a higher rank is not an outcome."
@@ -193,7 +193,7 @@ st.plotly_chart(
         hover_data=["scene", "engine", "instrument", "bpm"],
         title="Synthetic Anxiety-Engagement Pattern",
     ),
-    use_container_width=True,
+    width="stretch",
     config={"toImageButtonOptions": {"format": "png", "filename": "anxiety_engagement_scatter"}},
 )
 st.caption(NON_CLINICAL_NOTICE)

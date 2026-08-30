@@ -1,11 +1,13 @@
 # Deployment Guide: Streamlit Community Cloud + Neon PostgreSQL
 
-Status: **draft prepared 2026-08-19** for S18 (Deployment, demo, portfolio, and release
+Status: **draft prepared 2026-08-19; hardening prerequisite completed locally
+2026-08-30 (S18, D027)** for the unit S18 (Deployment, demo, portfolio, and release
 audit). The target stack was chosen by the student between sessions: the app runs on
-**Streamlit Community Cloud**, the database is **Neon PostgreSQL**. Nothing in this
-guide has been executed yet - all "observed" claims below describe the local setup
-only. When S18 runs, update this file with actual screenshots/outputs under
-`evidence/S18/` and mark each step done.
+**Streamlit Community Cloud**, the database is **Neon PostgreSQL**. The deployment
+hardening prerequisite (Part 0, first item) is done and tested locally; none of the
+console steps (Parts 1-5) have been executed yet - they require the student's
+accounts. When the cloud deployment is executed, update this file with actual
+screenshots/outputs under `evidence/S18/` and mark each step done.
 
 Why this stack (recorded for transparency):
 
@@ -17,13 +19,15 @@ Why this stack (recorded for transparency):
 
 ## 0. Prerequisites checklist
 
-- [ ] **Deployment hardening (Engineering Notes, TASKS.md):** replace the
-      repository's fresh per-operation connections with a pooled connection
-      manager (connection factory -> pooled engine -> transaction wrapper ->
-      retry/timeout handling -> multi-user simulated deployment test) BEFORE
-      deploying. The per-operation pattern is acceptable only for the local
-      single-user demo (D017 limitation). Add `psycopg_pool` to dependencies
-      as part of this work.
+- [x] **Deployment hardening (Engineering Notes, TASKS.md): DONE locally
+      2026-08-30 (D027).** The repository's fresh per-operation connections
+      were replaced with a pooled connection manager (connection factory ->
+      pooled engine -> transaction wrapper -> retry/timeout handling ->
+      multi-user simulated deployment test) in `src/ai_music_therapy/db.py` +
+      `tests/test_connection_pool.py`. `psycopg[binary,pool]` is in
+      `pyproject.toml` and `requirements.txt`. Verified: 8 simulated users x
+      4 ops through one max_size=4 pool, all 32 operations succeeded
+      (evidence/S18/).
 - [ ] GitHub repository pushed and up to date (`git push origin main`).
 - [ ] Local gates green: `pytest`, `ruff check src tests scripts`,
       `python scripts/smoke_test.py`.
@@ -88,8 +92,11 @@ Streamlit Community Cloud installs dependencies from `requirements.txt` and then
 2. **Dev dependencies are not needed in the cloud.** `requirements.txt` already
    excludes pytest/ruff; keep it that way.
 
-S18 action item: add `-e .` to `requirements.txt` and verify the app still boots
-locally before deploying.
+S18 action item (done 2026-08-30, D027): `-e .` is at the top of
+`requirements.txt` and the psycopg pin carries the `pool` extra
+(`psycopg[binary,pool]>=3.2`) so the pooled `db.py` imports resolve in the
+cloud build. The app boots locally with this file (verified via fresh
+checkout, evidence/S18/check_outputs.txt).
 
 ## 4. Deploy on Streamlit Community Cloud
 
@@ -120,10 +127,10 @@ locally before deploying.
    AI_MUSIC_APP_MODE = "deterministic"
    ```
 
-   `st.secrets` values are exposed as environment variables to the app only if the
-   code reads them - `config.py` currently reads `os.getenv`, so S18 must either
-   prefer env vars via advanced settings, or add a small `st.secrets` fallback to
-   `config.py`. Decide and record it in the S18 decision log entry.
+   Decision (S18, D027): use **env vars via Advanced settings** - `config.py`
+   reads `os.getenv` and Streamlit Cloud exposes advanced-settings entries as
+   environment variables, so no `st.secrets` code path is added. The TOML
+   secrets fallback above stays documented but unused.
 5. Click **Deploy**. First build takes a few minutes (pip install of streamlit,
    pandas, plotly, psycopg).
 6. After the app starts, open the Personas page. If it lists the seeded personas,

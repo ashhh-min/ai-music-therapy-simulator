@@ -38,4 +38,4 @@ This project is an educational, evidence-first **simulator**. Its outputs are sy
 
 - Evidence and run bundles are local-only (`data/local/`, `evidence/` are gitignored); published artifacts reference them by path and checksum rather than embedding them.
 - Provenance is complete (engine, model, prompt version, seed, timestamp, synthetic label), but the AI provider history above means historical AI outputs cannot be regenerated identically by switching `.env.local` back - the provider would also need to be available.
-- The dashboard's `use_container_width` deprecation warnings and the un-pooled per-operation database connections are known engineering follow-ups (pooling is the S18 prerequisite before multi-user deployment).
+- The dashboard `use_container_width` deprecation (fixed in S18 via `width="stretch"`) and the un-pooled per-operation database connections (fixed in S18 via the pooled connection manager in `src/ai_music_therapy/db.py`, D027) bounded the pre-release stack; both are resolved and verified, and the remaining deployment follow-ups are listed in `docs/DeploymentRunbook.md` Part E.

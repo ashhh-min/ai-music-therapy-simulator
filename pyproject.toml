@@ -15,7 +15,7 @@ dependencies = [
   "pandas>=2.2",
   "plotly>=5.24",
   "python-dotenv>=1.0",
-  "psycopg[binary]>=3.2",
+  "psycopg[binary,pool]>=3.2",
 ]
 
 [project.optional-dependencies]

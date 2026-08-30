@@ -25,3 +25,5 @@ private/
 setup_claude_glm52_mac_ark.zsh
 .claude/
 bailian.md
+docs/new
+Configure-ClaudeCode-Bailian.zsh

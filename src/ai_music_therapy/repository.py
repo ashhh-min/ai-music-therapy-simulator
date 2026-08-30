@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-import psycopg
-from psycopg.rows import dict_row
+from collections.abc import Callable
 
+import psycopg
+
+from .db import ConnectionFactory, PooledConnectionManager, get_manager
 from .models import Persona, TrialRecord
 
 SCHEMA = """
@@ -30,23 +32,40 @@ CREATE TABLE IF NOT EXISTS trials (
 class Repository:
     """PostgreSQL persistence for synthetic personas and trial records.
 
-    Connections are opened lazily per operation so that importing this module
-    (e.g. Streamlit pages at import time) never requires a reachable database.
+    All operations run through a pooled connection manager
+    (factory -> pool -> transaction -> retry/timeout; see ``db.py``), so
+    concurrent users share a bounded set of connections instead of opening a
+    fresh one per operation. The pool opens lazily on first use: constructing
+    a ``Repository`` (e.g. at Streamlit page import) never requires a
+    reachable database.
     """
 
-    def __init__(self, database_url: str):
+    def __init__(
+        self,
+        database_url: str,
+        manager: PooledConnectionManager | None = None,
+    ):
         self.database_url = database_url
+        # explicit manager wins (tests inject their own); otherwise the
+        # process-wide cached pool for this URL is shared across reruns/threads
+        self.manager = manager or get_manager(database_url)
 
     def connect(self) -> psycopg.Connection:
-        return psycopg.connect(self.database_url, row_factory=dict_row)
+        """Open one direct (non-pooled) connection; kept for tooling/tests."""
+        return ConnectionFactory(self.database_url).connect()
+
+    def _run(self, operation: Callable[[psycopg.Connection], object]) -> object:
+        return self.manager.run(operation)
 
     def initialize(self) -> None:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> None:
             with conn.cursor() as cur:
                 cur.execute(SCHEMA)
 
+        self._run(op)
+
     def upsert_persona(self, persona: Persona) -> None:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> None:
             with conn.cursor() as cur:
                 cur.execute(
                     "INSERT INTO personas(persona_id, payload_json, synthetic) "
@@ -56,27 +75,36 @@ class Repository:
                     (persona.persona_id, persona.model_dump_json()),
                 )
 
+        self._run(op)
+
     def list_personas(self) -> list[Persona]:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> list[Persona]:
             with conn.cursor() as cur:
                 cur.execute("SELECT payload_json FROM personas ORDER BY persona_id")
                 rows = cur.fetchall()
-        return [Persona.model_validate_json(row["payload_json"]) for row in rows]
+            return [Persona.model_validate_json(row["payload_json"]) for row in rows]
+
+        return self._run(op)  # type: ignore[return-value]
 
     def get_persona(self, persona_id: str) -> Persona:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> Persona | None:
             with conn.cursor() as cur:
                 cur.execute(
                     "SELECT payload_json FROM personas WHERE persona_id = %s",
                     (persona_id,),
                 )
                 row = cur.fetchone()
-        if row is None:
+            return (
+                Persona.model_validate_json(row["payload_json"]) if row else None
+            )
+
+        persona = self._run(op)
+        if persona is None:
             raise KeyError(f"Unknown persona: {persona_id}")
-        return Persona.model_validate_json(row["payload_json"])
+        return persona  # type: ignore[return-value]
 
     def save_trial(self, trial: TrialRecord) -> None:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> None:
             with conn.cursor() as cur:
                 try:
                     cur.execute(
@@ -104,14 +132,23 @@ class Repository:
                         "have a unique ID; nothing was overwritten"
                     ) from error
 
+        self._run(op)
+
     def get_trial(self, trial_id: str) -> TrialRecord:
-        with self.connect() as conn:
+        def op(conn: psycopg.Connection) -> TrialRecord | None:
             with conn.cursor() as cur:
-                cur.execute("SELECT payload_json FROM trials WHERE trial_id = %s", (trial_id,))
+                cur.execute(
+                    "SELECT payload_json FROM trials WHERE trial_id = %s", (trial_id,)
+                )
                 row = cur.fetchone()
-        if row is None:
+            return (
+                TrialRecord.model_validate_json(row["payload_json"]) if row else None
+            )
+
+        trial = self._run(op)
+        if trial is None:
             raise KeyError(f"Unknown trial: {trial_id}")
-        return TrialRecord.model_validate_json(row["payload_json"])
+        return trial  # type: ignore[return-value]
 
     def list_trials(
         self,
@@ -134,10 +171,14 @@ class Repository:
             clauses.append("engine = %s")
             params.append(engine)
         where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
-        with self.connect() as conn:
+
+        def op(conn: psycopg.Connection) -> list[TrialRecord]:
             with conn.cursor() as cur:
                 cur.execute(
-                    f"SELECT payload_json FROM trials {where} ORDER BY created_at", params
+                    f"SELECT payload_json FROM trials {where} ORDER BY created_at",
+                    params,
                 )
                 rows = cur.fetchall()
-        return [TrialRecord.model_validate_json(row["payload_json"]) for row in rows]
+            return [TrialRecord.model_validate_json(row["payload_json"]) for row in rows]
+
+        return self._run(op)  # type: ignore[return-value]

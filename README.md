@@ -37,11 +37,40 @@ The app works in **deterministic demo mode** without an API key.
 For optional AI mode:
 
 ```bash
-cp .env.example .env
-# Add OPENAI_API_KEY locally. Never commit .env.
+cp .env.example .env.local
+# Add OPENAI_API_KEY (plus OPENAI_MODEL / OPENAI_BASE_URL for a
+# Responses-API-compatible provider) locally. Never commit .env files.
 ```
 
-Default model configuration is `gpt-5.6-terra`, selected through `OPENAI_MODEL` and replaceable without code changes.
+The code default is `gpt-5.6-terra` (via `OPENAI_MODEL`); any OpenAI
+Responses-API-compatible provider works by setting `OPENAI_BASE_URL`. The
+project has been exercised live with three providers (GLM, Volcano Ark, and
+Aliyun Bailian `qwen3.8-max`); AI output is not reproducible run-to-run and is
+always labeled with its model name.
+
+## Results and reports
+
+- Research report: `docs/ResearchReport.md` (descriptive, synthetic-only).
+- Analysis record: `docs/analysis_notebook.md` (full 75-cell table, engine comparison).
+- Limitations: `docs/limitations.md`.
+- Batch experiments: `python scripts/run_batch.py` runs the frozen 75-cell
+  matrix and exports immutable, synthetic-labeled run bundles under
+  `data/local/batch_runs/` (`--ai-subset N` adds an optional AI comparison).
+
+## Deployment
+
+- Runbook (local, demo, Streamlit Community Cloud + Neon PostgreSQL):
+  `docs/DeploymentRunbook.md`.
+- Provider-specific manual guide: `docs/DeploymentGuide_StreamlitCloud_Neon.md`.
+- Database access is pooled (bounded connection pool, transaction wrapper,
+  retry + timeout) so a multi-user cloud deployment shares a small set of
+  connections instead of opening one per operation.
+
+## Demo and portfolio
+
+- 5-7 minute demo that needs no API key: `docs/DemoScript.md`.
+- How to present this project (what to show, what to claim, what to avoid):
+  `docs/PortfolioGuide.md`.
 
 ## Research boundary
 
@@ -78,7 +107,8 @@ Default model configuration is `gpt-5.6-terra`, selected through `OPENAI_MODEL` 
 docker compose up -d   # once per machine session, after `colima start`
 python -m ai_music_therapy.seed_demo
 python scripts/smoke_test.py
-python scripts/run_batch_demo.py --output data/local/batch_demo.csv
+python scripts/run_batch.py            # frozen 75-cell matrix (no key needed)
+python scripts/run_batch.py --dry-run  # validate the matrix only
 pytest
 streamlit run app.py
 ```
