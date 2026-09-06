@@ -1,7 +1,7 @@
 # Project Status
 
 - Package state: Prepared starter, installed editable in a Python 3.13.14 `.venv`
-- Active control step: S19 implemented 2026-09-06, PENDING ACCEPTANCE; ad-hoc entrances with staged review and approved track/persona libraries (raw audio never persisted; write-once approval; review trials in-memory only; D028)
+- Active control step: S19 ACCEPTED 2026-09-06 (two same-day review revisions landed); ad-hoc entrances with staged review and approved track/persona libraries (raw audio never persisted; write-once approval; review trials in-memory only; D028). Next unit: S20 (parameter-to-Max/MSP patch generation) prompt prepared, NOT started; cloud go-live happens in the student's offline session
 - Next implementation unit: none until S19 is accepted; after acceptance the student runs the cloud go-live steps in an offline session
 - Last accepted checkpoint: see `git log` (S07 + infra committed 2026-08-12; PostgreSQL switch committed 2026-08-19); prior accepted = c87c076 (S06)
 - Persistence: PostgreSQL 16 via `docker compose up -d` (Colima/QEMU local VM); repository on psycopg 3; re-seed with `python -m ai_music_therapy.seed_demo`
