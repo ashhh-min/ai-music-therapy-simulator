@@ -11,7 +11,7 @@ Max/MSP is a commercial desktop application (Cycling '74). It has no web runtime
 
 1. The site deterministically GENERATES a Max patch file (`.maxpat`, which is JSON) from `MusicParameters` - a real, loadable patch the student opens in desktop Max, where Max itself renders the sample music.
 2. The site shows the LOGIC WIRING of that patch (diagram + patch JSON) so the pedagogy is visible without Max.
-3. The site renders a LOCAL PYTHON PREVIEW of the same patch specification (numpy/soundfile, in-memory wav, `st.audio`) - explicitly labeled as an approximation of the patch's intended material, NOT Max/MSP audio.
+3. The site renders a LOCAL PYTHON PREVIEW of the same patch specification (numpy/soundfile, in-memory wav, `st.audio` + `st.download_button`) - so the student hears and downloads a short sample music file directly from the site, in a format every audio program can open. It is explicitly labeled as an approximation of the patch's intended material, NOT Max/MSP audio; Max renders the definitive version when the student opens the `.maxpat` on the desktop.
 
 All three artifacts derive from ONE deterministic patch specification, so they can never disagree about structure.
 
@@ -71,7 +71,7 @@ Researcher-defined and explicitly a demonstration mapping, not music theory:
 ## Implementation order
 1. Spike (record in D029): validate a minimal generated `.maxpat` structure - decide `py2max` vs hand-rolled template (if `py2max` is adopted, add to `pyproject.toml` + `requirements.txt`; check its Max-version compatibility). Student opens the spike patch in desktop Max if available and reports; otherwise document the unverified-in-Max limitation honestly.
 2. `patch_generation.py`: PatchSpec + the four pure functions.
-3. UI page + `app.py` registration (Lab section, after "Propose a Persona"): source radio (manual parameters / approved track), mapping table shown as a caption/expander, generate button, artifacts: `st.download_button` (`.maxpat`, filename `synthetic_patch_<seed8>.maxpat`), `st.graphviz_chart` wiring, `st.audio` preview, patch-JSON expander, provenance line (spec_version, seed, source, generator timestamp), synthetic/non-clinical + trademark captions.
+3. UI page + `app.py` registration (Lab section, after "Propose a Persona"): source radio (manual parameters / approved track), mapping table shown as a caption/expander, generate button, artifacts: `st.download_button` (`.maxpat`, filename `synthetic_patch_<seed8>.maxpat`), `st.graphviz_chart` wiring, `st.audio` preview + `st.download_button` for the same preview bytes (`synthetic_preview_<seed8>.wav`, playable in any audio software), patch-JSON expander, provenance line (spec_version, seed, source, generator timestamp), synthetic/non-clinical + trademark captions.
 4. Tests: determinism (same params -> identical spec/maxpat bytes; different params -> different seed); structural invariants (JSON parses, `patcher` header present, unique ids, every patchline endpoint exists, object vocabulary within whitelist); mapping tests (bpm->metro text, volume->gain dB, tonality->scale table, instrument->voice objects); preview tests (wav bytes decode via soundfile, duration <= 30 s, non-silent, peak within headroom); AppTest page render + end-to-end generate + download presence + approved-track source; no-network guarantee (nothing imports openai in this module).
 5. Docs: README section (with trademark line), `docs/decisions.md` D029, `docs/CoBuildLog.md` entry, `docs/DataGovernance.md` (generated patches/previews = synthetic artifacts, session-only, never persisted), `docs/limitations.md` (preview is an approximation; Max-loadability verified manually or documented as unverified).
 6. Gates: full suite via junit (284 baseline + new), ruff, smoke, `git diff --check`, clean-checkout no-key verification, release scans (no secrets, no clinical claims, synthetic labels, zero audio binaries committed), `evidence/S20/check_outputs.txt` captured truthfully, control docs updated (append-only), commit + push.
@@ -79,7 +79,7 @@ Researcher-defined and explicitly a demonstration mapping, not music theory:
 ## Acceptance gates (all must be true, evidence captured)
 - New page generates all three artifacts from manual parameters AND from an approved TrackBase track; deterministic for identical inputs.
 - `.maxpat` output passes every structural test; Max-loadability status reported honestly (manually verified by the student, or explicitly recorded as unverified).
-- Preview wav is in-memory only, capped at 30 s, labeled as an approximation; nothing persisted anywhere; downloads are user-initiated.
+- Preview wav is in-memory only, capped at 30 s, labeled as an approximation, and downloadable (`.wav`) alongside the `.maxpat`; nothing persisted anywhere; downloads are user-initiated.
 - Full suite green via junit with zero skips for DB-gated tests that can run, ruff clean, smoke PASS, clean checkout with no key and no `.env.local` green.
 - Synthetic/non-clinical framing and Cycling '74 trademark/attribution line visible on the page and in the README.
 - Frozen matrix, preregistration, ontology, bundles, and database schema untouched.
