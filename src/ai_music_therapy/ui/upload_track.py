@@ -38,7 +38,10 @@ from ai_music_therapy.ui.confirm_trial import (
 
 PROPOSAL_KEY = "track_proposal"
 CONFIRMATION_KEY = "track_confirmation"
-MAX_UPLOAD_BYTES = 20 * 1024 * 1024
+#: 120 MB covers a full 10-minute CD-quality WAV (the 600 s duration cap,
+#: ~106 MB) and stays under Streamlit's server.maxUploadSize default (200 MB),
+#: so no server config change is needed locally or on Community Cloud.
+MAX_UPLOAD_BYTES = 120 * 1024 * 1024
 
 GENRES = ["classical", "popular", "nature", "instrumental", "vocal"]
 INSTRUMENTS = ["piano", "guitar", "percussion", "synth", "voice", "mixed"]
@@ -92,9 +95,14 @@ if PROPOSAL_KEY not in st.session_state:
         "ever be kept, and only after your explicit approval."
     )
     uploaded = st.file_uploader(
-        "Audio file (wav / flac / ogg, max 20 MB)",
-        type=["wav", "flac", "ogg"],
+        "Audio file (wav / flac / ogg / mp3, max 120 MB)",
+        type=["wav", "flac", "ogg", "mp3"],
         key="track_uploader",
+    )
+    st.caption(
+        "Tip: long or studio-quality recordings fit best as mp3/flac/ogg - a "
+        "10-minute CD-quality WAV is ~106 MB, the same track as MP3 is ~10-24 MB. "
+        "Lossy compression barely affects these coarse feature estimates."
     )
     if uploaded is not None and st.button(
         "Extract parameters (local, no API)", type="primary", key="extract"

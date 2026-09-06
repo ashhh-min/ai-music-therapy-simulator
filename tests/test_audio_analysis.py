@@ -98,6 +98,19 @@ def test_profile_provenance_fields():
     assert isinstance(profile, AudioExtraction)
 
 
+def test_extracts_from_mp3_without_extra_dependencies():
+    # libsndfile (bundled with soundfile) decodes mp3 natively; the same
+    # extraction path must work for compressed uploads.
+    buffer = io.BytesIO()
+    sr = SR
+    t = np.arange(int(4.0 * sr)) / sr
+    signal = (0.4 * np.sin(2 * np.pi * 440.0 * t)).astype(np.float32)
+    soundfile.write(buffer, signal, sr, format="MP3")
+    profile = extract_audio_profile(buffer.getvalue())
+    assert profile.duration_sec == pytest.approx(4.0, abs=0.15)
+    assert profile.volume_bucket in ("low", "medium", "high")
+
+
 # ----------------------------------------------------------- error paths
 
 def test_corrupt_bytes_raise_typed_error():

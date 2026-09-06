@@ -63,7 +63,8 @@ Two extra pages share one staged workflow: **propose -> review (editable) ->
 confirmation trial (in-memory only) -> explicit approval -> write-once library
 entry**. Nothing is persisted before approval; rejection saves nothing.
 
-- **Propose a Track**: upload a wav/flac/ogg file (max 20 MB). Local
+- **Propose a Track**: upload a wav / flac / ogg / mp3 file (max 120 MB;
+  compressed formats recommended for long tracks). Local
   deterministic DSP (librosa) estimates tempo, volume bucket, duration,
   spectral centroid, and a gated major/minor heuristic; the reviewer edits the
   parameters, optionally runs an unsaved confirmation trial, and only approval

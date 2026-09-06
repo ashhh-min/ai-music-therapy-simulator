@@ -107,7 +107,7 @@ def extract_audio_profile(data: bytes) -> AudioExtraction:
     except (LibsndfileError, RuntimeError, ValueError) as error:
         raise CorruptAudioError(
             f"Could not decode the file as audio ({type(error).__name__}). "
-            "Supported formats: wav, flac, ogg."
+            "Supported formats: wav, flac, ogg, mp3."
         ) from error
 
     if y.size == 0 or float(np.abs(y).max()) == 0.0:
