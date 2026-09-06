@@ -15,6 +15,9 @@ Max/MSP is a commercial desktop application (Cycling '74). It has no web runtime
 
 All three artifacts derive from ONE deterministic patch specification, so they can never disagree about structure.
 
+## Scope nailed down by the student (2026-09-06, at kickoff)
+Deliverables, in the student's priority order: (1) a **downloadable sample music file** (the local preview WAV - the site's direct audio output), (2) the **wiring-logic diagram** rendered on the page, and (3) the **`.maxpat` file for desktop Max** - the student explicitly accepted that `.maxpat` is Max-only ("I am ok with this"). Pure Data and MIDI exports REMAIN EXCLUDED. The student authorized kickoff ("append new session with these, and kick it off"): S20 begins now, following the prior-state check below.
+
 ## Decisions already made (do not reopen)
 1. One shared `PatchSpec` (pydantic model) is the single source: `.maxpat` text, wiring diagram, and preview wav are all pure functions of it. Determinism: same `MusicParameters` (+ generator version) -> byte-identical spec and patch.
 2. Inputs are the frozen S04 `MusicParameters` only - manual widgets or an approved TrackBase track (reusing S19's music-source pattern). No ontology change; S20 is a read-only consumer.
