@@ -57,6 +57,29 @@ always labeled with its model name.
   matrix and exports immutable, synthetic-labeled run bundles under
   `data/local/batch_runs/` (`--ai-subset N` adds an optional AI comparison).
 
+## Ad-hoc entrances (experimental, S19)
+
+Two extra pages share one staged workflow: **propose -> review (editable) ->
+confirmation trial (in-memory only) -> explicit approval -> write-once library
+entry**. Nothing is persisted before approval; rejection saves nothing.
+
+- **Propose a Track**: upload a wav/flac/ogg file (max 20 MB). Local
+  deterministic DSP (librosa) estimates tempo, volume bucket, duration,
+  spectral centroid, and a gated major/minor heuristic; the reviewer edits the
+  parameters, optionally runs an unsaved confirmation trial, and only approval
+  commits a TrackBase entry: reviewed parameter profile + source-file sha256 +
+  extraction provenance. Raw audio is never stored anywhere. Approved tracks
+  become selectable as a music source on the trial page.
+- **Propose a Persona**: three input modes - JSON upload validated against the
+  frozen Persona schema, an optional key-gated AI-assisted draft (reusing the
+  S11 pipeline), and a manual form - all passing the same gates: stereotype and
+  synthetic-wording hard flags block approval, near-duplicates require explicit
+  confirmation, existing persona IDs are never overwritten.
+
+Approved uploads form an explicitly-labelled exploratory cohort; they never
+enter the frozen 75-cell matrix or its bundle findings. Both entrances work
+with no API key (the AI draft is correctly gated).
+
 ## Deployment
 
 - Runbook (local, demo, Streamlit Community Cloud + Neon PostgreSQL):

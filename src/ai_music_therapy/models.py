@@ -83,6 +83,59 @@ class MusicParameters(BaseModel):
     lyrics_language: Literal["none", "english", "chinese"] = "none"
 
 
+class AudioExtraction(BaseModel):
+    """Descriptive DSP features extracted from an uploaded audio file.
+
+    Estimates, not ground truth: tempo/mode detection are heuristics and the
+    volume bucket is a researcher-defined threshold over RMS energy. Raw audio
+    is never persisted anywhere in the system; only this profile and the
+    source-file hash may be stored (S19 decision, D028).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    duration_sec: float = Field(ge=0)
+    tempo_bpm: float | None = None
+    rms_db: float
+    volume_bucket: Literal["low", "medium", "high"]
+    spectral_centroid_hz: float = Field(ge=0)
+    mode_estimate: Literal["major", "minor"] | None = None
+    extractor: str = Field(min_length=1)
+
+
+class TrackEntry(BaseModel):
+    """An approved uploaded track: reviewed parameters + extraction provenance.
+
+    Write-once by repository policy (duplicate ``track_id`` is refused; there
+    is no update path). ``music`` is the final reviewed parameter set used to
+    run trials; ``extraction`` records what the DSP actually observed and
+    ``overridden_fields`` which parameters the reviewer changed. The raw
+    audio file is deliberately absent: only the profile and the source-file
+    sha256 are kept, so an approved track stays reproducible without hosting
+    user audio (S19 decision, D028).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    track_id: str
+    display_name: str = Field(min_length=1)
+    approved_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+    source_file_name: str = Field(min_length=1)
+    source_file_sha256: str = Field(min_length=64, max_length=64)
+    music: MusicParameters
+    extraction: AudioExtraction
+    overridden_fields: list[str] = []
+    notes: str = ""
+    synthetic: Literal[True] = True
+
+    @field_validator("track_id")
+    @classmethod
+    def track_id_prefix(cls, value: str) -> str:
+        if not value.startswith("TRK-"):
+            raise ValueError("track_id must start with TRK-")
+        return value
+
+
 class TimeStage(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

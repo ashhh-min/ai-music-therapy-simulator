@@ -5,7 +5,7 @@ from collections.abc import Callable
 import psycopg
 
 from .db import ConnectionFactory, PooledConnectionManager, get_manager
-from .models import Persona, TrialRecord
+from .models import Persona, TrackEntry, TrialRecord
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS personas (
@@ -25,6 +25,13 @@ CREATE TABLE IF NOT EXISTS trials (
     payload_json TEXT NOT NULL,
     synthetic INTEGER NOT NULL CHECK (synthetic = 1),
     FOREIGN KEY(persona_id) REFERENCES personas(persona_id)
+);
+CREATE TABLE IF NOT EXISTS tracks (
+    track_id TEXT PRIMARY KEY,
+    display_name TEXT NOT NULL,
+    approved_at TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    synthetic INTEGER NOT NULL CHECK (synthetic = 1)
 );
 """
 
@@ -180,5 +187,60 @@ class Repository:
                 )
                 rows = cur.fetchall()
             return [TrialRecord.model_validate_json(row["payload_json"]) for row in rows]
+
+        return self._run(op)  # type: ignore[return-value]
+
+    # TrackBase (S19): approved uploaded tracks. Write-once by design - there
+    # is save + read only, no update or delete path, mirroring the immutable
+    # batch bundles. Raw audio is never stored; the payload carries the
+    # reviewed parameter profile and the source-file sha256 only.
+
+    def save_track(self, track: TrackEntry) -> None:
+        def op(conn: psycopg.Connection) -> None:
+            with conn.cursor() as cur:
+                try:
+                    cur.execute(
+                        """
+                        INSERT INTO tracks(
+                            track_id, display_name, approved_at, payload_json,
+                            synthetic
+                        ) VALUES (%s, %s, %s, %s, 1)
+                        """,
+                        (
+                            track.track_id,
+                            track.display_name,
+                            track.approved_at,
+                            track.model_dump_json(),
+                        ),
+                    )
+                except psycopg.errors.UniqueViolation as error:
+                    raise ValueError(
+                        f"Duplicate track_id {track.track_id}: approved tracks "
+                        "are write-once and cannot be overwritten"
+                    ) from error
+
+        self._run(op)
+
+    def get_track(self, track_id: str) -> TrackEntry:
+        def op(conn: psycopg.Connection) -> TrackEntry | None:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT payload_json FROM tracks WHERE track_id = %s",
+                    (track_id,),
+                )
+                row = cur.fetchone()
+            return TrackEntry.model_validate_json(row["payload_json"]) if row else None
+
+        track = self._run(op)
+        if track is None:
+            raise KeyError(f"Unknown track: {track_id}")
+        return track  # type: ignore[return-value]
+
+    def list_tracks(self) -> list[TrackEntry]:
+        def op(conn: psycopg.Connection) -> list[TrackEntry]:
+            with conn.cursor() as cur:
+                cur.execute("SELECT payload_json FROM tracks ORDER BY approved_at")
+                rows = cur.fetchall()
+            return [TrackEntry.model_validate_json(row["payload_json"]) for row in rows]
 
         return self._run(op)  # type: ignore[return-value]

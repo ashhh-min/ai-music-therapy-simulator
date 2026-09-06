@@ -15,20 +15,21 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S18
-Unit focus: Deployment, Demo, Portfolio, and Release Audit.
-Current prompt: `prompts/Session_18_Deployment_Demo_Portfolio_and_Release_Audit.md`
-Status: Implemented 2026-08-30 pending mentor acceptance. Deployment hardening done and tested (connection factory, pooled engine, transaction wrapper, retry/timeout, 8-user simulated deployment test: new `src/ai_music_therapy/db.py`, refactored `repository.py`, 7 new tests in `tests/test_connection_pool.py`). Deployment/demo/portfolio docs complete (`docs/DeploymentRunbook.md`, `docs/DemoScript.md`, `docs/PortfolioGuide.md`); release scans pass; clean checkout verified. Public cloud deployment prepared but NOT executed - it requires the student's Streamlit Community Cloud + Neon accounts.
-Acceptance evidence: `evidence/S18/check_outputs.txt`; decision D027.
-Pre-unit checkpoint: dbfe3df.
+Unit code: S19
+Unit focus: Ad-hoc Entrances - Staged Review and Approved Track/Persona Libraries.
+Current prompt: `prompts/Session_19_Adhoc_Entrances_Track_Persona_Libraries.md`
+Status: Implemented 2026-09-06, PENDING ACCEPTANCE. All four implementation-order steps landed on top of checkpoint f177134: staged state machine + write-once TrackBase persistence, local librosa extraction + track entrance UI end-to-end, persona entrance (JSON upload / key-gated AI draft / manual form) through the S11 gates, docs + control docs. Gates: full suite 281 passed via junit (234 baseline + 47 new; 0 failures/errors/skips), ruff clean, smoke PASS, git diff --check clean, clean checkout deterministic with no API key and no .env.local (281/281 + smoke PASS), release scans clean (no secrets, no clinical claims, synthetic labels present, zero audio files committed). Locked student decisions implemented as agreed: approved tracks store profile + sha256 only (raw audio never persisted); review-stage trials not persisted; three persona input modes; write-once approval, existing IDs never overwritten. Cloud go-live remains deferred to the student's offline session after S19 acceptance.
+Acceptance evidence: `evidence/S19/check_outputs.txt` (captured 2026-09-06); decision D028 (recorded in `docs/decisions.md`).
+Pre-unit checkpoint: f177134.
 
 ## Acceptance Criteria for Current Unit
-- A clean checkout runs in deterministic mode: YES (fresh checkout of the committed tree, fresh venv, `pip install -e ".[dev]"`, smoke + pytest with no API key and no .env.local; DB tests run against the local test database or skip cleanly).
-- Five-to-seven-minute demo works without a live API: YES (`docs/DemoScript.md` is fully deterministic with offline fallbacks; no-key AppTest trial save verified).
-- Secrets/private-data/unsupported-claim scans pass: YES (release-tree scans: only the intentional local docker demo credentials match; no private data; clinical-claim matches appear only in disclaimer/boundary contexts; synthetic labels present on release docs and bundles).
-- All S01-S18 states, evidence, and release files agree: YES (checklist fully green S01-S18; runbook/guide state cloud deployment pending; limitations engineering follow-ups closed truthfully).
-- Student can explain the principal change and one limitation: principal change = pooled connection manager (factory, pool, transaction, retry) shared process-wide so concurrent Streamlit users share a bounded pool; limitation = the public cloud deployment itself is not executed and awaits student accounts.
-- `TASKS.md`, `STATUS.md`, decisions, co-build log, tests, and evidence agree: YES (this commit; pytest 234 passed).
+- Upload, extract, review (edit), confirmation trial, approval persists a TrackBase entry with full provenance; rejection persists nothing.
+- Raw audio is verifiably never persisted (memory only; database stores the reviewed parameter profile + source sha256).
+- All three persona input modes (JSON upload, AI draft, manual form) reach the same gates; approval saves, rejection does not, existing persona IDs never overwritten.
+- Deterministic no-key path works for both entrances (AI draft correctly key-gated).
+- Frozen 75-cell matrix, preregistration, and immutable bundles untouched.
+- Full suite + ruff + smoke green; clean checkout still runs deterministic.
+- `TASKS.md`, `STATUS.md`, decisions (D028), co-build log, tests, and evidence agree.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -50,7 +51,8 @@ Pre-unit checkpoint: dbfe3df.
 - [x] S15 - Dashboard II: radar, time series, and summaries (complete 2026-08-20; accepted - six-dimension radar profile (calm/engagement/mood/regulation/attention/stability), temporal stage means, descriptive rankings with n_trials + engines, per-trial uncertainty notes, PNG camera icon + CSV data export; chart guide in docs/chart_interpretation.md; 4 new analytics tests + title-language guard; AppTest verified; evidence/S15/check_outputs.txt)
 - [x] S16 - Batch experiment runner and trial matrix (complete 2026-08-21; accepted - `scripts/run_batch.py` runs the frozen 75-cell matrix from `config/trial_matrix.csv` (single source of truth), validates matrix+completeness (missing/duplicate/extra cells fail), exports an immutable synthetic-labeled run bundle (trials.csv/json + manifest with matrix sha256 and findings: null) under data/local/batch_runs/; optional `--ai-subset N` (key-gated, live-verified 1 cell via Ark); 14 new tests; official run: 75/75 cells; evidence/S16/check_outputs.txt)
 - [x] S17 - Analysis, limitations, and research report (complete 2026-08-21; accepted 2026-08-30 - docs/analysis_notebook.md (full 75-cell table, persona/scenario/variant summaries, H1-H4 probes, 0 safety flags, engine stability incl. 5 matched AI cells + 3-sample same-cell variance probe), docs/limitations.md (persona validity, model dependence incl. 3-provider history, prompt sensitivity, no human participants + coverage limits), docs/ResearchReport.md (separates 4A software behavior from 4B model content); new AI comparison bundle ai-comparison-20260821 (75 det + 5 AI via qwen3.8-max); evidence/S17/check_outputs.txt)
-- [x] S18 - Deployment, demo, portfolio, and release audit (complete 2026-08-30; pending mentor acceptance - DB hardening per Engineering Notes: `src/ai_music_therapy/db.py` (ConnectionFactory, PooledConnectionManager with psycopg_pool min1/max8/checkout 10s/lifetime 1800s, transaction wrapper, run() with 3-attempt exponential-backoff retry on OperationalError, process-wide get_manager registry + atexit close), repository refactored onto manager.run, 7 new pool tests incl. 8-user simulated deployment (32/32 ops through max_size=4); dashboard migrated off deprecated use_container_width to width="stretch"; requirements.txt prepared for Streamlit Cloud (-e ., psycopg[binary,pool]); docs/DeploymentRunbook.md + DemoScript.md + PortfolioGuide.md written; DeploymentGuide hardening prerequisite marked done; release scans pass (secrets/private data/claims/synthetic labels); clean checkout verified deterministic; cloud deployment itself NOT executed (needs student accounts); evidence/S18/check_outputs.txt)
+- [x] S18 - Deployment, demo, portfolio, and release audit (complete 2026-08-30; accepted 2026-08-30 - DB hardening per Engineering Notes: `src/ai_music_therapy/db.py` (ConnectionFactory, PooledConnectionManager with psycopg_pool min1/max8/checkout 10s/lifetime 1800s, transaction wrapper, run() with 3-attempt exponential-backoff retry on OperationalError, process-wide get_manager registry + atexit close), repository refactored onto manager.run, 7 new pool tests incl. 8-user simulated deployment (32/32 ops through max_size=4); dashboard migrated off deprecated use_container_width to width="stretch"; requirements.txt prepared for Streamlit Cloud (-e ., psycopg[binary,pool]); docs/DeploymentRunbook.md + DemoScript.md + PortfolioGuide.md written; DeploymentGuide hardening prerequisite marked done; release scans pass (secrets/private data/claims/synthetic labels); clean checkout verified deterministic; cloud deployment itself NOT executed (needs student accounts); evidence/S18/check_outputs.txt)
+- [ ] S19 - Ad-hoc entrances: staged review and approved track/persona libraries (implemented 2026-09-06, pending acceptance; 47 new tests, suite 281 green, evidence/S19/check_outputs.txt; prompt at prompts/Session_19_Adhoc_Entrances_Track_Persona_Libraries.md)
 
 ## Known Issues
 - None blocking. Non-blocking observations recorded during audit:
@@ -62,13 +64,12 @@ Pre-unit checkpoint: dbfe3df.
   - AI mode not yet functional with GLM (verified 2026-08-12): the user's `.env.local` sets `OPENAI_MODEL=glm-5.2` + `OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/chat/completions` + a real key. A live probe returned 404 `path: /v4/chat/completions/responses`. Two causes for S10 to resolve: (a) `src/ai_music_therapy/ai_client.py` uses the OpenAI **Responses API** (`client.responses.parse`), which GLM's compatibility layer does not support (it exposes `/chat/completions`); (b) `OPENAI_BASE_URL` should be the API root (`https://open.bigmodel.cn/api/paas/v4`) without the `/chat/completions` suffix. Deterministic mode (default) is unaffected.
 
 ## Last Test Evidence
-- Unit: S18 (Deployment, Demo, Portfolio, Release Audit).
-- pytest: 234 passed (227 baseline + 7 new connection-pool tests). ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
-- Pool verification: 20 ops opened <= 2 connections; commit/rollback semantics; retry on transient OperationalError (succeeds on attempt 3); non-retryable errors propagate immediately; 8 simulated users x 4 ops through a max_size=4 pool, 32/32 succeeded, pool_size <= 4.
-- Deterministic no-key path: AppTest trial-page run saves a trial with no API key; batch runner `--dry-run` validates the frozen matrix.
-- Clean checkout: fresh checkout of the committed tree + fresh venv + `pip install -e ".[dev]"` + smoke + pytest, no API key, no .env.local (output in the evidence file).
-- Release scans: secrets (only local docker demo creds), private data (none), clinical claims (disclaimer/boundary contexts only), synthetic labelling (present on release docs and bundles).
-- Raw output: `evidence/S18/check_outputs.txt`.
+- Unit: S19 (Ad-hoc Entrances: Staged Review and Approved Track/Persona Libraries).
+- pytest: 281 passed / 0 failed / 0 errors / 0 skipped (junit XML; 234 baseline + 15 track-library + 19 audio-analysis + 13 entrance-UI AppTest). Note: this environment swallows pytest's final console count line (pre-existing, unrelated to S19), so junit is the authoritative count. ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
+- Persistence boundary verified by tests: raw audio never persisted (proposal carries extraction + sha256 only); review confirmation trials never saved (list_trials empty after in-memory trial); duplicate track_id refused as write-once violation; `tracks` table CHECK (synthetic = 1) guard; invalid state-machine jumps refused; existing persona IDs never overwritten.
+- Deterministic no-key path: full suite + smoke ran with no OPENAI_API_KEY; clean checkout (fresh tree copy, fresh Python 3.13 venv, `pip install -e ".[dev]"`, no key, no .env.local) passed smoke + 281/281.
+- Release scans: secrets (none beyond intentional local docker test-DB defaults), clinical claims (none in new sources), synthetic labels (present on both entrances and in confirm_trial output), audio files committed (none; fixtures are generated in-memory signals), frozen artifacts (trial_matrix.csv, preregistration, bundles, ontology: untouched).
+- Raw output: `evidence/S19/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -85,7 +86,7 @@ Pre-unit checkpoint: dbfe3df.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-S18 is the final unit of the S01-S18 plan; there is no next unit to prepare. Project state at completion: all units accepted through S17, S18 implemented and pending mentor acceptance. Remaining open work is execution-only, not implementation: the public Streamlit Community Cloud + Neon deployment (checklist in `docs/DeploymentRunbook.md` Parts C/D and `docs/DeploymentGuide_StreamlitCloud_Neon.md`) awaits the student's accounts. Do not begin any work beyond the plan without a new written prompt.
+S19 is implemented and pending acceptance (2026-09-06; extension beyond the S01-S18 plan, requested and scoped by the student). After S19 acceptance, the student runs the cloud go-live steps (DeploymentRunbook Parts C/D, Streamlit Community Cloud + Neon) in an offline session. No further unit is prepared; do not begin anything without a new written prompt.
 ## Engineering Notes
 - [x] S18 deployment hardening (DONE locally 2026-08-30, D027; `src/ai_music_therapy/db.py` + `tests/test_connection_pool.py`, incl. multi-user simulated deployment test): replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
 - [ ] Future control-doc edits: avoid literal matching on prose lines containing Unicode punctuation (em dashes etc.); use stable dash-free anchors, headings, IDs, regex, or structured markers instead.

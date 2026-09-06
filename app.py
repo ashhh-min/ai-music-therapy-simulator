@@ -25,6 +25,12 @@ pages = {
         st.Page("src/ai_music_therapy/ui/personas.py", title="Synthetic Personas", icon="🧩"),
         st.Page("src/ai_music_therapy/ui/trial.py", title="Run a Trial", icon="🎧"),
         st.Page("src/ai_music_therapy/ui/dashboard.py", title="Dashboard", icon="📊"),
+        st.Page("src/ai_music_therapy/ui/upload_track.py", title="Propose a Track", icon="🎼"),
+        st.Page(
+            "src/ai_music_therapy/ui/propose_persona.py",
+            title="Propose a Persona",
+            icon="✍️",
+        ),
     ],
     "Research": [
         st.Page("src/ai_music_therapy/ui/methods.py", title="Methods and Limits", icon="📚"),

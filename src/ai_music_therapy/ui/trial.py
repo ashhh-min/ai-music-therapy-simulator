@@ -33,30 +33,56 @@ scene = st.selectbox(
     ],
 )
 
-c1, c2, c3 = st.columns(3)
-with c1:
-    genre = st.selectbox("Genre", ["classical", "popular", "nature", "instrumental", "vocal"])
-    bpm = st.slider("Tempo (BPM)", 40, 120, 68)
-    volume = st.selectbox("Volume category", ["low", "medium", "high"])
-with c2:
-    instrument = st.selectbox(
-        "Primary instrument", ["piano", "guitar", "percussion", "synth", "voice", "mixed"]
+tracks = repo.list_tracks()
+if tracks:
+    music_source = st.radio(
+        "Music source",
+        ["Manual parameters", "Approved track (TrackBase)"],
+        horizontal=True,
     )
-    tonality = st.selectbox("Tonality", ["major", "minor", "atonal"])
-    duration_sec = st.selectbox("Duration", [60, 180, 300])
-with c3:
-    lyrics_language = st.selectbox("Lyrics", ["none", "english", "chinese"])
-    engine = st.radio("Engine", ["deterministic", "openai"], horizontal=True)
+else:
+    music_source = "Manual parameters"
 
-music = MusicParameters(
-    genre=genre,
-    bpm=bpm,
-    volume=volume,
-    instrument=instrument,
-    tonality=tonality,
-    duration_sec=duration_sec,
-    lyrics_language=lyrics_language,
-)
+if music_source == "Approved track (TrackBase)":
+    track = st.selectbox(
+        "Approved track",
+        tracks,
+        format_func=lambda t: f"{t.display_name} ({t.track_id})",
+    )
+    music = track.music
+    st.caption(
+        f"Parameters reviewed and approved {track.approved_at}; source file "
+        f"{track.source_file_name} (fingerprint {track.source_file_sha256[:12]}...). "
+        "Approved tracks form an exploratory cohort; raw audio is not stored."
+    )
+else:
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        genre = st.selectbox(
+            "Genre", ["classical", "popular", "nature", "instrumental", "vocal"]
+        )
+        bpm = st.slider("Tempo (BPM)", 40, 120, 68)
+        volume = st.selectbox("Volume category", ["low", "medium", "high"])
+    with c2:
+        instrument = st.selectbox(
+            "Primary instrument", ["piano", "guitar", "percussion", "synth", "voice", "mixed"]
+        )
+        tonality = st.selectbox("Tonality", ["major", "minor", "atonal"])
+        duration_sec = st.selectbox("Duration", [60, 180, 300])
+    with c3:
+        lyrics_language = st.selectbox("Lyrics", ["none", "english", "chinese"])
+
+    music = MusicParameters(
+        genre=genre,
+        bpm=bpm,
+        volume=volume,
+        instrument=instrument,
+        tonality=tonality,
+        duration_sec=duration_sec,
+        lyrics_language=lyrics_language,
+    )
+
+engine = st.radio("Engine", ["deterministic", "openai"], horizontal=True)
 
 if st.button("Run synthetic trial", type="primary"):
     try:
