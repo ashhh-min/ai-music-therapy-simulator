@@ -32,6 +32,7 @@ from ai_music_therapy.track_service import (
 from ai_music_therapy.ui.confirm_trial import (
     SCENES,
     engine_options,
+    render_engine_hint,
     render_trial_result,
     run_in_memory_trial,
 )
@@ -211,6 +212,7 @@ if PROPOSAL_KEY in st.session_state:
         )
         trial_scene = t2.selectbox("Support scenario", SCENES, key="trial_scene")
         trial_engine = t3.radio("Engine", engine_options(), horizontal=True, key="trial_engine")
+        render_engine_hint()
         if st.button("Run confirmation trial", key="run_confirmation"):
             music = _current_music()
             if music is not None:

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from openai import OpenAI
 from pydantic import ValidationError
 
+from .ai_client import OPENAI_MAX_RETRIES, OPENAI_TIMEOUT_SEC
 from .config import settings
 from .models import Persona
 from .repository import Repository
@@ -106,7 +107,12 @@ def draft_persona_with_openai(brief: str) -> PersonaDraft:
             "OPENAI_API_KEY is not configured; personas can still be written by hand."
         )
 
-    client = OpenAI(api_key=settings.openai_api_key, base_url=settings.openai_base_url)
+    client = OpenAI(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url,
+        timeout=OPENAI_TIMEOUT_SEC,
+        max_retries=OPENAI_MAX_RETRIES,
+    )
     feedback: str | None = None
     last_error: Exception | None = None
     for _attempt in range(2):

@@ -180,6 +180,7 @@ def _patch_transport(monkeypatch, replies):
 
     class _FakeClient:
         def __init__(self, **kwargs):
+            fake.client_kwargs = kwargs  # captured for bounded-client assertions
             self.responses = fake
 
     monkeypatch.setattr("ai_music_therapy.persona_service.OpenAI", _FakeClient)
@@ -212,6 +213,22 @@ def test_ai_draft_returns_unsaved_validated_draft(monkeypatch):
     assert draft.persona == persona
     assert draft.flags == []
     assert transport.calls == 1  # validated on first attempt
+
+
+def test_ai_draft_client_is_bounded_by_timeout(monkeypatch):
+    # Review revision 2026-09-06: the persona draft must use the same bounded
+    # client as the trial engine, so a stalled provider fails fast.
+    from ai_music_therapy.ai_client import OPENAI_MAX_RETRIES, OPENAI_TIMEOUT_SEC
+
+    monkeypatch.setattr(
+        "ai_music_therapy.persona_service.settings",
+        types.SimpleNamespace(openai_api_key="test-key", openai_model="m", openai_base_url="u"),
+    )
+    persona = _clone(_load_all()[0], persona_id="P-BOUNDED")
+    transport = _patch_transport(monkeypatch, [persona.model_dump_json()])
+    draft_persona_with_openai("bounded client probe")
+    assert transport.client_kwargs["timeout"] == OPENAI_TIMEOUT_SEC
+    assert transport.client_kwargs["max_retries"] == OPENAI_MAX_RETRIES == 0
 
 
 def test_ai_draft_rejects_invalid_after_retry(monkeypatch):

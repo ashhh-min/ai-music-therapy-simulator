@@ -31,9 +31,28 @@ SCENES = [
 ]
 
 
+#: Expectation-setting hint shown wherever the openai engine can be selected.
+#: A live reasoning-model call takes roughly 1-2 minutes (measured ~95 s for a
+#: full trial against qwen3.8-max); Streamlit renders nothing until it returns,
+#: and each attempt is bounded by ai_client.OPENAI_TIMEOUT_SEC.
+ENGINE_HINT = (
+    "The openai engine makes a live reasoning-model call: expect roughly 1-2 "
+    "minutes of waiting, with results and charts appearing only once the call "
+    "completes. Each attempt is bounded by a 120-second timeout, so a stalled "
+    "provider surfaces as an error message instead of an endless spinner. The "
+    "deterministic engine is instant local computation."
+)
+
+
 def engine_options() -> list[str]:
     """Engines available for a confirmation trial (openai needs a key)."""
     return ["deterministic"] + (["openai"] if settings.openai_api_key else [])
+
+
+def render_engine_hint() -> None:
+    """Show ENGINE_HINT only when the openai engine is actually selectable."""
+    if settings.openai_api_key:
+        st.caption(ENGINE_HINT)
 
 
 def run_in_memory_trial(

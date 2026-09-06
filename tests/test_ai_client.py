@@ -4,7 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from ai_music_therapy.ai_client import simulate_with_openai
+from ai_music_therapy.ai_client import (
+    OPENAI_MAX_RETRIES,
+    OPENAI_TIMEOUT_SEC,
+    simulate_with_openai,
+)
 from ai_music_therapy.models import MusicParameters, Persona, ReactionOutput
 
 
@@ -98,6 +102,29 @@ def test_valid_output_parses_and_validates(monkeypatch):
     assert calls[0]["store"] is False
     assert calls[0]["model"] == "test-model"
     assert calls[0]["text"] == {"format": {"type": "json_object"}}
+
+
+def test_client_is_bounded_by_timeout_and_no_sdk_retries(monkeypatch):
+    # Review revision 2026-09-06: a stalled provider must fail fast instead of
+    # spinning the UI for the SDK default (600 s x retries). The client must be
+    # constructed with an explicit bounded timeout and no transport retries.
+    monkeypatch.setattr("ai_music_therapy.ai_client.settings", _settings())
+    client_kwargs: dict = {}
+
+    class _FakeResponses:
+        def create(self, **kwargs):
+            return _FakeResponse(json.dumps(_valid_payload()))
+
+    class _FakeClient:
+        def __init__(self, **kwargs):
+            client_kwargs.update(kwargs)
+            self.responses = _FakeResponses()
+
+    monkeypatch.setattr("ai_music_therapy.ai_client.OpenAI", _FakeClient)
+    simulate_with_openai(_persona(), _music(), "sleep_support")
+    assert client_kwargs["timeout"] == OPENAI_TIMEOUT_SEC
+    assert OPENAI_TIMEOUT_SEC <= 120.0  # bounded well under the SDK's 600 s default
+    assert client_kwargs["max_retries"] == OPENAI_MAX_RETRIES == 0
 
 
 def test_provider_drift_is_sanitized(monkeypatch):

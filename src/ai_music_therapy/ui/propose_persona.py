@@ -30,6 +30,7 @@ from ai_music_therapy.ui.confirm_trial import (
     DEFAULT_CONFIRMATION_MUSIC,
     SCENES,
     engine_options,
+    render_engine_hint,
     render_trial_result,
     run_in_memory_trial,
 )
@@ -224,6 +225,7 @@ if DRAFT_KEY in st.session_state:
     t1, t2 = st.columns(2)
     scene = t1.selectbox("Support scenario", SCENES, key="pp_scene")
     engine = t2.radio("Engine", engine_options(), horizontal=True, key="pp_engine")
+    render_engine_hint()
     if st.button("Run confirmation trial", key="pp_run_trial"):
         record = run_in_memory_trial(persona, DEFAULT_CONFIRMATION_MUSIC, scene, engine)
         st.session_state[CONFIRMATION_KEY] = record.model_dump()

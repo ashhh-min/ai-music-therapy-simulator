@@ -46,7 +46,11 @@ The code default is `gpt-5.6-terra` (via `OPENAI_MODEL`); any OpenAI
 Responses-API-compatible provider works by setting `OPENAI_BASE_URL`. The
 project has been exercised live with three providers (GLM, Volcano Ark, and
 Aliyun Bailian `qwen3.8-max`); AI output is not reproducible run-to-run and is
-always labeled with its model name.
+always labeled with its model name. Live calls are bounded by an explicit
+120-second timeout with no SDK transport retries: a reasoning-model trial
+legitimately takes ~1-2 minutes (measured ~95 s against `qwen3.8-max`), and a
+stalled provider surfaces as a clear error instead of an endless spinner. The
+deterministic engine is instant local computation.
 
 ## Results and reports
 

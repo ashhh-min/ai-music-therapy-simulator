@@ -10,6 +10,7 @@ from ai_music_therapy.deterministic_simulator import simulate
 from ai_music_therapy.export import trials_to_csv, trials_to_json
 from ai_music_therapy.models import MusicParameters, TrialRecord
 from ai_music_therapy.repository import Repository
+from ai_music_therapy.ui.confirm_trial import ENGINE_HINT
 
 st.title("Run a Synthetic Trial")
 st.caption("The result is a model-generated hypothesis, not a real-world prediction.")
@@ -83,6 +84,9 @@ else:
     )
 
 engine = st.radio("Engine", ["deterministic", "openai"], horizontal=True)
+# The openai option is always listed; without a key the run fails fast with
+# a clear error. With a key it is a live call, so set expectations.
+st.caption(ENGINE_HINT)
 
 if st.button("Run synthetic trial", type="primary"):
     try:

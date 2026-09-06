@@ -25,6 +25,17 @@ Include uncertainty_note and safety_flags (empty array if none).""".format(
 _LIST_FIELDS = ("physical_observations", "communication_observations")
 _STAGE_ORDER = ("start", "middle", "end")
 
+#: Hard wall-clock bound for one live AI call (seconds). The SDK default is
+#: 600 s; with a stalled provider that leaves the Streamlit UI spinning for
+#: many minutes. 120 s comfortably covers the measured full-trial latency of
+#: a reasoning model (~95 s) while failing fast on a hang. A timeout surfaces
+#: as an openai.APITimeoutError, which the UI shows as a clear st.error and
+#: nothing is saved.
+OPENAI_TIMEOUT_SEC = 120.0
+#: No SDK-level transport retries: this module already implements its own
+#: single validation-retry, and stacked retries only lengthen UI stalls.
+OPENAI_MAX_RETRIES = 0
+
 
 def _sanitize(data: object) -> object:
     """Drop unknown keys and tolerate common provider JSON drift.
@@ -77,7 +88,12 @@ def simulate_with_openai(persona: Persona, music: MusicParameters, scene: str) -
     if not settings.openai_api_key:
         raise RuntimeError("OPENAI_API_KEY is not configured; use deterministic mode.")
 
-    client = OpenAI(api_key=settings.openai_api_key, base_url=settings.openai_base_url)
+    client = OpenAI(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url,
+        timeout=OPENAI_TIMEOUT_SEC,
+        max_retries=OPENAI_MAX_RETRIES,
+    )
     feedback: str | None = None
     last_error: Exception | None = None
     for _attempt in range(2):
