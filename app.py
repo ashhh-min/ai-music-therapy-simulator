@@ -31,6 +31,11 @@ pages = {
             title="Propose a Persona",
             icon="✍️",
         ),
+        st.Page(
+            "src/ai_music_therapy/ui/generate_patch.py",
+            title="Generate a Max Patch",
+            icon="🎛️",
+        ),
     ],
     "Research": [
         st.Page("src/ai_music_therapy/ui/methods.py", title="Methods and Limits", icon="📚"),

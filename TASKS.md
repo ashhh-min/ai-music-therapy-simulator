@@ -15,21 +15,22 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S19
-Unit focus: Ad-hoc Entrances - Staged Review and Approved Track/Persona Libraries.
-Current prompt: `prompts/Session_19_Adhoc_Entrances_Track_Persona_Libraries.md`
-Status: ACCEPTED by the student 2026-09-06 (after two same-day review revisions). All four implementation-order steps landed on top of checkpoint f177134: staged state machine + write-once TrackBase persistence, local librosa extraction + track entrance UI end-to-end, persona entrance (JSON upload / key-gated AI draft / manual form) through the S11 gates, docs + control docs. Gates: full suite 284 passed via junit (234 baseline + 50 new; 0 failures/errors/skips), ruff clean, smoke PASS, git diff --check clean, clean checkout deterministic with no API key and no .env.local (284/284 + smoke PASS), release scans clean (no secrets, no clinical claims, synthetic labels present, zero audio files committed). Locked student decisions implemented as agreed: approved tracks store profile + sha256 only (raw audio never persisted); review-stage trials not persisted; three persona input modes; write-once approval, existing IDs never overwritten. Cloud go-live remains in the student's offline session now that S19 is accepted. Review revision 2026-09-06 (student feedback during review): mp3 added to the accepted formats (libsndfile 1.2.2 native, no new dependency) and the upload cap raised 20 -> 120 MB (covers a 10-minute CD WAV, under Streamlit's 200 MB server default); D028 correction note recorded. Second revision 2026-09-06 (student report: the openai engine spins endlessly): live AI calls are now bounded (timeout 120 s, max_retries 0) in ai_client.py and persona_service.py - measured full-call latency was 94.6 s against qwen3.8-max, so the provider was healthy and the defect was the missing client timeout (SDK default 600 s) - plus a shared engine-expectation hint on all three engine selectors; D028 second-correction note recorded.
-Acceptance evidence: `evidence/S19/check_outputs.txt` (captured 2026-09-06); decision D028 (recorded in `docs/decisions.md`).
-Pre-unit checkpoint: f177134.
+Unit code: S20
+Unit focus: Parameter-to-Max/MSP Patch Generation (the reversed S19 flow).
+Current prompt: `prompts/Session_20_Parameter_to_MaxMSP_Patch_Generation.md`
+Status: IMPLEMENTED 2026-09-17, pending student acceptance (kicked off by the student's explicit "append new session with these, and kick it off" on 2026-09-06). All implementation-order steps landed on top of checkpoint 93ec99c: spike-verified hand-rolled .maxpat generation (no py2max, anchored on a real Max 9 export), ONE deterministic PatchSpec (seed = sha256 of canonical parameters) driving three synchronized artifacts - downloadable .maxpat, wiring DOT diagram rendered client-side via st.graphviz_chart, local preview WAV (numpy + soundfile, capped 30 s, approximation NOT Max audio) - plus the "Generate a Max Patch" page (manual widgets or approved TrackBase track as parameter source), 25 pure + 3 DB-gated AppTest tests. Gates: full suite 312 passed / 0 failures / 0 errors / 0 skipped via junit (284 baseline + 28 new, PostgreSQL up, DB-gated tests executed), ruff clean, smoke PASS, git diff --check clean, release scans clean (no secrets, no clinical claims, synthetic + Cycling '74 trademark labels present, zero audio/patch binaries committed, frozen artifacts untouched), clean checkout deterministic with no API key and no .env.local (312/312 + smoke PASS). The page persists NOTHING (session state + user-initiated downloads only). Honest boundary: Max-loadability is a MANUAL student step - sample artifacts generated at evidence/S20/synthetic_patch_1ab48c73.maxpat + synthetic_preview_1ab48c73.wav; automated tests cover structural validity and determinism only.
+Acceptance evidence: `evidence/S20/check_outputs.txt` (captured 2026-09-17); decision D029 (recorded in `docs/decisions.md`).
+Pre-unit checkpoint: 93ec99c.
 
 ## Acceptance Criteria for Current Unit
-- Upload, extract, review (edit), confirmation trial, approval persists a TrackBase entry with full provenance; rejection persists nothing.
-- Raw audio is verifiably never persisted (memory only; database stores the reviewed parameter profile + source sha256).
-- All three persona input modes (JSON upload, AI draft, manual form) reach the same gates; approval saves, rejection does not, existing persona IDs never overwritten.
-- Deterministic no-key path works for both entrances (AI draft correctly key-gated).
-- Frozen 75-cell matrix, preregistration, and immutable bundles untouched.
-- Full suite + ruff + smoke green; clean checkout still runs deterministic.
-- `TASKS.md`, `STATUS.md`, decisions (D028), co-build log, tests, and evidence agree.
+- Same parameters -> byte-identical PatchSpec, .maxpat, DOT, and preview WAV (seed = sha256 of the canonical parameters JSON).
+- The .maxpat is valid JSON with the reference Max header shape, unique box ids, every patchline resolving to an existing id, and a closed object whitelist; synthetic + trademark comments embedded.
+- All three deliverables present on the page in the student's priority order: downloadable preview WAV, wiring-logic diagram, downloadable .maxpat.
+- The page persists nothing: no DB writes (tracks/trials/personas unchanged); artifacts only in session state and user-initiated downloads.
+- Manual parameters and an approved TrackBase track both work as parameter sources; frozen matrix, preregistration, and bundles untouched.
+- Full suite + ruff + smoke green; clean checkout still deterministic with no key.
+- Max-loadability reported honestly as a manual student verification step (sample artifacts in evidence/S20/).
+- `TASKS.md`, `STATUS.md`, decisions (D029), co-build log, tests, and evidence agree.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -53,6 +54,7 @@ Pre-unit checkpoint: f177134.
 - [x] S17 - Analysis, limitations, and research report (complete 2026-08-21; accepted 2026-08-30 - docs/analysis_notebook.md (full 75-cell table, persona/scenario/variant summaries, H1-H4 probes, 0 safety flags, engine stability incl. 5 matched AI cells + 3-sample same-cell variance probe), docs/limitations.md (persona validity, model dependence incl. 3-provider history, prompt sensitivity, no human participants + coverage limits), docs/ResearchReport.md (separates 4A software behavior from 4B model content); new AI comparison bundle ai-comparison-20260821 (75 det + 5 AI via qwen3.8-max); evidence/S17/check_outputs.txt)
 - [x] S18 - Deployment, demo, portfolio, and release audit (complete 2026-08-30; accepted 2026-08-30 - DB hardening per Engineering Notes: `src/ai_music_therapy/db.py` (ConnectionFactory, PooledConnectionManager with psycopg_pool min1/max8/checkout 10s/lifetime 1800s, transaction wrapper, run() with 3-attempt exponential-backoff retry on OperationalError, process-wide get_manager registry + atexit close), repository refactored onto manager.run, 7 new pool tests incl. 8-user simulated deployment (32/32 ops through max_size=4); dashboard migrated off deprecated use_container_width to width="stretch"; requirements.txt prepared for Streamlit Cloud (-e ., psycopg[binary,pool]); docs/DeploymentRunbook.md + DemoScript.md + PortfolioGuide.md written; DeploymentGuide hardening prerequisite marked done; release scans pass (secrets/private data/claims/synthetic labels); clean checkout verified deterministic; cloud deployment itself NOT executed (needs student accounts); evidence/S18/check_outputs.txt)
 - [x] S19 - Ad-hoc entrances: staged review and approved track/persona libraries (implemented and ACCEPTED 2026-09-06 with two same-day review revisions: mp3 + 120 MB cap; bounded AI-client timeout + engine hints; 50 new tests, suite 284 green, evidence/S19/check_outputs.txt; prompt at prompts/Session_19_Adhoc_Entrances_Track_Persona_Libraries.md)
+- [ ] S20 - Parameter-to-Max/MSP patch generation (IMPLEMENTED 2026-09-17, pending student acceptance incl. the manual desktop-Max load check; 28 new tests, suite 312 green, evidence/S20/check_outputs.txt; prompt at prompts/Session_20_Parameter_to_MaxMSP_Patch_Generation.md)
 
 ## Known Issues
 - None blocking. Non-blocking observations recorded during audit:
@@ -64,12 +66,14 @@ Pre-unit checkpoint: f177134.
   - AI mode not yet functional with GLM (verified 2026-08-12): the user's `.env.local` sets `OPENAI_MODEL=glm-5.2` + `OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/chat/completions` + a real key. A live probe returned 404 `path: /v4/chat/completions/responses`. Two causes for S10 to resolve: (a) `src/ai_music_therapy/ai_client.py` uses the OpenAI **Responses API** (`client.responses.parse`), which GLM's compatibility layer does not support (it exposes `/chat/completions`); (b) `OPENAI_BASE_URL` should be the API root (`https://open.bigmodel.cn/api/paas/v4`) without the `/chat/completions` suffix. Deterministic mode (default) is unaffected.
 
 ## Last Test Evidence
-- Unit: S19 (Ad-hoc Entrances: Staged Review and Approved Track/Persona Libraries).
-- pytest: 284 passed / 0 failed / 0 errors / 0 skipped (junit XML; 234 baseline + 15 track-library + 20 audio-analysis + 13 entrance-UI AppTest + 2 bounded-AI-client; incl. both review-revision test additions). Note: this environment swallows pytest's final console count line (pre-existing, unrelated to S19), so junit is the authoritative count. ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
-- Persistence boundary verified by tests: raw audio never persisted (proposal carries extraction + sha256 only); review confirmation trials never saved (list_trials empty after in-memory trial); duplicate track_id refused as write-once violation; `tracks` table CHECK (synthetic = 1) guard; invalid state-machine jumps refused; existing persona IDs never overwritten.
-- Deterministic no-key path: full suite + smoke ran with no OPENAI_API_KEY; clean checkout (fresh tree copy, fresh Python 3.13 venv, `pip install -e ".[dev]"`, no key, no .env.local) passed smoke + 284/284 after both review revisions.
-- Release scans: secrets (none beyond intentional local docker test-DB defaults), clinical claims (none in new sources), synthetic labels (present on both entrances and in confirm_trial output), audio files committed (none; fixtures are generated in-memory signals), frozen artifacts (trial_matrix.csv, preregistration, bundles, ontology: untouched).
-- Raw output: `evidence/S19/check_outputs.txt`.
+- Unit: S20 (Parameter-to-Max/MSP Patch Generation).
+- pytest: 312 passed / 0 failed / 0 errors / 0 skipped (junit XML; 284 baseline + 25 patch-generation + 3 patch-page AppTest; DB-gated tests ran against mt_simulator_test with zero skips). Console count line swallowed (pre-existing environment quirk); junit authoritative. ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
+- Determinism verified: byte-identical spec/.maxpat/preview WAV on rebuild; the student sample artifacts regenerated cross-session with identical seed 1ab48c73 (27 boxes, 31 wires, 17,231-char maxpat, 30.00 s preview @ 22,050 Hz, peak 0.160).
+- Persistence boundary verified by AppTest: generate + render leaves tracks/trials empty; the approved-track source records provenance (track:TRK-PATCHUI) without writing anything new.
+- Max-loadability: NOT machine-verifiable in this environment (no Max runtime exists here); manual student step, sample patch + WAV at evidence/S20/.
+- Release scans: no secrets, no clinical claims, synthetic + Cycling '74 trademark labels present (page, patch comments, README), zero audio/patch binaries committed, frozen artifacts untouched.
+- Clean checkout: fresh tree copy, fresh Python 3.13 venv, `pip install -e ".[dev]"`, no OPENAI_API_KEY, no .env.local -> smoke PASS + 312/312.
+- Raw output: `evidence/S20/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -86,7 +90,7 @@ Pre-unit checkpoint: f177134.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-S19 is ACCEPTED (2026-09-06; extension beyond the S01-S18 plan, requested and scoped by the student; two same-day review revisions landed before acceptance). The student runs the cloud go-live steps (DeploymentRunbook Parts C/D, Streamlit Community Cloud + Neon) in an offline session. Next unit: S20 (parameter-to-Max/MSP patch generation, the reversed S19 flow) with its prompt prepared at prompts/Session_20_Parameter_to_MaxMSP_Patch_Generation.md; do not begin until the student explicitly says to start S20.
+S20 is IMPLEMENTED and pending student acceptance (kicked off 2026-09-06 by the student's explicit instruction; implementation completed 2026-09-17). The student's manual acceptance step: open evidence/S20/synthetic_patch_1ab48c73.maxpat (or a freshly generated patch from the page) in desktop Max, enable audio, flip the toggle, and confirm the patch plays the mapped material and auto-stops after the mapped bars. The student runs the cloud go-live steps (DeploymentRunbook Parts C/D, Streamlit Community Cloud + Neon) in an offline session. No further unit begins until the student accepts S20 and requests the next one.
 ## Engineering Notes
 - [x] S18 deployment hardening (DONE locally 2026-08-30, D027; `src/ai_music_therapy/db.py` + `tests/test_connection_pool.py`, incl. multi-user simulated deployment test): replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
 - [ ] Future control-doc edits: avoid literal matching on prose lines containing Unicode punctuation (em dashes etc.); use stable dash-free anchors, headings, IDs, regex, or structured markers instead.

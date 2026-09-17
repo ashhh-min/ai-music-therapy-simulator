@@ -35,6 +35,13 @@
 - Review-stage confirmation trials are shown in memory and never saved; they check simulator behavior, not any real-world effect.
 - Approved uploads are an explicitly-labelled exploratory cohort: they never enter the frozen 75-cell matrix, the preregistration, or immutable bundle findings, and any analysis of them is reported as exploratory.
 
+## Generated patches and previews (S20)
+
+- Generated `.maxpat` patches, wiring diagrams, and preview WAVs are synthetic artifacts derived only from reviewed `MusicParameters`; they contain no real audio, personal data, or uploaded content.
+- The generator persists nothing: artifacts live in session memory and in user-initiated downloads only; the site never writes patch or audio files to disk or to the database.
+- Preview WAVs are local approximations of the patch's intended material, not Max/MSP output, and are labelled as such wherever rendered.
+- Generated patches are explicitly labelled exploratory demonstration artifacts; they never enter the frozen 75-cell matrix, the preregistration, or immutable bundle findings.
+
 ## Retention
 
 Keep only the minimum synthetic outputs needed for the project. Delete failed or duplicate local runs after acceptance evidence is captured.

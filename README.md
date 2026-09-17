@@ -85,6 +85,32 @@ Approved uploads form an explicitly-labelled exploratory cohort; they never
 enter the frozen 75-cell matrix or its bundle findings. Both entrances work
 with no API key (the AI draft is correctly gated).
 
+## Generate a Max patch (experimental, S20)
+
+The track-entrance flow reversed: **parameters in, patch out**. A new page
+(Generate a Max Patch) turns reviewed `MusicParameters` - typed manually or
+taken from an approved TrackBase track - into ONE deterministic `PatchSpec`
+(seed = sha256 of the parameters) and derives three synchronized artifacts:
+
+- a downloadable **`.maxpat` file** for desktop Max/MSP: the generated
+  wiring plays the mapped short sample material and auto-stops after the
+  mapped number of bars;
+- a **wiring-logic diagram** of the same graph, rendered on the page;
+- a **local preview WAV** (downloadable, plays in any audio software),
+  rendered by the site's Python engine - an approximation of the patch's
+  intended material, NOT Max/MSP audio.
+
+The parameter mapping (bpm -> metro interval, tonality -> scale table,
+instrument -> oscillator voice, volume -> output gain, genre -> 8-step
+pattern, duration -> bar count with auto-stop) is a researcher-defined
+demonstration, not music theory. Same parameters -> byte-identical
+artifacts. Nothing is persisted; downloads are user-initiated. Whether a
+generated patch opens and plays in desktop Max is a MANUAL verification
+step (the format has no official public specification); the automated
+tests cover structural validity and determinism only. Max and Max/MSP are
+trademarks of Cycling '74; this project is not affiliated with or endorsed
+by Cycling '74. Opening a `.maxpat` requires a Max license or trial.
+
 ## Deployment
 
 - Runbook (local, demo, Streamlit Community Cloud + Neon PostgreSQL):
