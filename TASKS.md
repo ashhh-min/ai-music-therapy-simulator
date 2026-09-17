@@ -15,22 +15,21 @@ Build an evidence-first educational simulator that explores how explicitly synth
 - Save evidence under `evidence/<UnitID>/` and stop before the next unit.
 
 ## Current Unit
-Unit code: S20
-Unit focus: Parameter-to-Max/MSP Patch Generation (the reversed S19 flow).
-Current prompt: `prompts/Session_20_Parameter_to_MaxMSP_Patch_Generation.md`
-Status: ACCEPTED by the student 2026-09-17, no revisions requested (kicked off by the student's explicit "append new session with these, and kick it off" on 2026-09-06). All implementation-order steps landed on top of checkpoint 93ec99c: spike-verified hand-rolled .maxpat generation (no py2max, anchored on a real Max 9 export), ONE deterministic PatchSpec (seed = sha256 of canonical parameters) driving three synchronized artifacts - downloadable .maxpat, wiring DOT diagram rendered client-side via st.graphviz_chart, local preview WAV (numpy + soundfile, capped 30 s, approximation NOT Max audio) - plus the "Generate a Max Patch" page (manual widgets or approved TrackBase track as parameter source), 25 pure + 3 DB-gated AppTest tests. Gates: full suite 312 passed / 0 failures / 0 errors / 0 skipped via junit (284 baseline + 28 new, PostgreSQL up, DB-gated tests executed), ruff clean, smoke PASS, git diff --check clean, release scans clean (no secrets, no clinical claims, synthetic + Cycling '74 trademark labels present, zero audio/patch binaries committed, frozen artifacts untouched), clean checkout deterministic with no API key and no .env.local (312/312 + smoke PASS). The page persists NOTHING (session state + user-initiated downloads only). Honest boundary: Max-loadability is a MANUAL student step - sample artifacts generated at evidence/S20/synthetic_patch_1ab48c73.maxpat + synthetic_preview_1ab48c73.wav; automated tests cover structural validity and determinism only.
-Acceptance evidence: `evidence/S20/check_outputs.txt` (captured 2026-09-17); decision D029 (recorded in `docs/decisions.md`).
-Pre-unit checkpoint: 93ec99c.
+Unit code: S22
+Unit focus: UI Polish - ElevenLabs-Style Minimal Monochrome Theme (cosmetic only).
+Current prompt: `prompts/Session_22_UI_Polish_ElevenLabs_Style.md`
+Status: IMPLEMENTED 2026-09-17, pending student acceptance (kicked off the same day by the student's request to polish the look-and-feel "like elevenLab"; theme mode chosen by the student: Follow system). Theme = committable `.streamlit/config.toml` with dual achromatic palettes (default light; the visitor's browser Light/Dark/System setting selects which applies - Streamlit 1.60 has NO server-side `base = "system"`, crash-verified, and no `st.theme()`; disclosed honestly) + a mode-agnostic CSS layer (`src/ai_music_therapy/ui/theme_css.py`, injected once from `app.py`): pill buttons, soft rounding, hairline borders, Inter/system-ui typography, hidden footer, settings menu and global disclaimer kept visible. NO page module touched. Gates: full suite UNCHANGED at 312 passed / 0 failures / 0 errors / 0 skipped via junit (no key, PostgreSQL up), ruff clean, smoke PASS, `git diff --check` clean, AppTest over the app.py entry (CSS injected, disclaimer visible), server :8501 HTTP 200 with a clean startup log. Honest limit: no screenshot tooling in this environment, so pixel-level visual acceptance (light AND dark) is the student's browser step at http://localhost:8501.
+Acceptance evidence: `evidence/S22/check_outputs.txt` (captured 2026-09-17); decision D030 (recorded in `docs/decisions.md`).
+Pre-unit checkpoint: ead8c02.
 
 ## Acceptance Criteria for Current Unit
-- Same parameters -> byte-identical PatchSpec, .maxpat, DOT, and preview WAV (seed = sha256 of the canonical parameters JSON).
-- The .maxpat is valid JSON with the reference Max header shape, unique box ids, every patchline resolving to an existing id, and a closed object whitelist; synthetic + trademark comments embedded.
-- All three deliverables present on the page in the student's priority order: downloadable preview WAV, wiring-logic diagram, downloadable .maxpat.
-- The page persists nothing: no DB writes (tracks/trials/personas unchanged); artifacts only in session state and user-initiated downloads.
-- Manual parameters and an approved TrackBase track both work as parameter sources; frozen matrix, preregistration, and bundles untouched.
-- Full suite + ruff + smoke green; clean checkout still deterministic with no key.
-- Max-loadability reported honestly as a manual student verification step (sample artifacts in evidence/S20/).
-- `TASKS.md`, `STATUS.md`, decisions (D029), co-build log, tests, and evidence agree.
+- Cosmetic-only boundary held: no content, claim, label, wording, or widget-key change; the global sidebar disclaimer renders on every page; frozen matrix/preregistration/bundles untouched.
+- ElevenLabs-style look applied: achromatic light + dark palettes, pill buttons, hairline borders, soft rounding, Inter/system-ui typography; browser theme setting selects the palette.
+- No page module modified; the full suite stays 312 green (junit, 0 skips, no key) plus ruff/smoke/diff gates.
+- The themed app.py entry renders without exception (AppTest-verified: CSS block present, disclaimer visible).
+- Server starts clean on :8501 (HTTP 200, no config warnings/errors in the log).
+- Honest limits recorded: no screenshots possible here (student's browser is the visual gate); no server-side system-follow in Streamlit 1.60.
+- `TASKS.md`, `STATUS.md`, decisions (D030), co-build log, and evidence agree.
 
 ## Session Checklist
 - [x] INIT - Prepared starter materialized by package generator
@@ -55,6 +54,7 @@ Pre-unit checkpoint: 93ec99c.
 - [x] S18 - Deployment, demo, portfolio, and release audit (complete 2026-08-30; accepted 2026-08-30 - DB hardening per Engineering Notes: `src/ai_music_therapy/db.py` (ConnectionFactory, PooledConnectionManager with psycopg_pool min1/max8/checkout 10s/lifetime 1800s, transaction wrapper, run() with 3-attempt exponential-backoff retry on OperationalError, process-wide get_manager registry + atexit close), repository refactored onto manager.run, 7 new pool tests incl. 8-user simulated deployment (32/32 ops through max_size=4); dashboard migrated off deprecated use_container_width to width="stretch"; requirements.txt prepared for Streamlit Cloud (-e ., psycopg[binary,pool]); docs/DeploymentRunbook.md + DemoScript.md + PortfolioGuide.md written; DeploymentGuide hardening prerequisite marked done; release scans pass (secrets/private data/claims/synthetic labels); clean checkout verified deterministic; cloud deployment itself NOT executed (needs student accounts); evidence/S18/check_outputs.txt)
 - [x] S19 - Ad-hoc entrances: staged review and approved track/persona libraries (implemented and ACCEPTED 2026-09-06 with two same-day review revisions: mp3 + 120 MB cap; bounded AI-client timeout + engine hints; 50 new tests, suite 284 green, evidence/S19/check_outputs.txt; prompt at prompts/Session_19_Adhoc_Entrances_Track_Persona_Libraries.md)
 - [x] S20 - Parameter-to-Max/MSP patch generation (complete 2026-09-17; accepted 2026-09-17; the manual desktop-Max load check remains available to the student via evidence/S20/; 28 new tests, suite 312 green, evidence/S20/check_outputs.txt; prompt at prompts/Session_20_Parameter_to_MaxMSP_Patch_Generation.md)
+- [ ] S22 - UI polish: ElevenLabs-style minimal monochrome theme (IMPLEMENTED 2026-09-17, pending student acceptance incl. the browser visual check light+dark; suite unchanged 312 green, evidence/S22/check_outputs.txt; prompt at prompts/Session_22_UI_Polish_ElevenLabs_Style.md; S21 remains prepared-and-deferred)
 
 ## Known Issues
 - None blocking. Non-blocking observations recorded during audit:
@@ -66,14 +66,13 @@ Pre-unit checkpoint: 93ec99c.
   - AI mode not yet functional with GLM (verified 2026-08-12): the user's `.env.local` sets `OPENAI_MODEL=glm-5.2` + `OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/chat/completions` + a real key. A live probe returned 404 `path: /v4/chat/completions/responses`. Two causes for S10 to resolve: (a) `src/ai_music_therapy/ai_client.py` uses the OpenAI **Responses API** (`client.responses.parse`), which GLM's compatibility layer does not support (it exposes `/chat/completions`); (b) `OPENAI_BASE_URL` should be the API root (`https://open.bigmodel.cn/api/paas/v4`) without the `/chat/completions` suffix. Deterministic mode (default) is unaffected.
 
 ## Last Test Evidence
-- Unit: S20 (Parameter-to-Max/MSP Patch Generation).
-- pytest: 312 passed / 0 failed / 0 errors / 0 skipped (junit XML; 284 baseline + 25 patch-generation + 3 patch-page AppTest; DB-gated tests ran against mt_simulator_test with zero skips). Console count line swallowed (pre-existing environment quirk); junit authoritative. ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
-- Determinism verified: byte-identical spec/.maxpat/preview WAV on rebuild; the student sample artifacts regenerated cross-session with identical seed 1ab48c73 (27 boxes, 31 wires, 17,231-char maxpat, 30.00 s preview @ 22,050 Hz, peak 0.160).
-- Persistence boundary verified by AppTest: generate + render leaves tracks/trials empty; the approved-track source records provenance (track:TRK-PATCHUI) without writing anything new.
-- Max-loadability: NOT machine-verifiable in this environment (no Max runtime exists here); manual student step, sample patch + WAV at evidence/S20/.
-- Release scans: no secrets, no clinical claims, synthetic + Cycling '74 trademark labels present (page, patch comments, README), zero audio/patch binaries committed, frozen artifacts untouched.
-- Clean checkout: fresh tree copy, fresh Python 3.13 venv, `pip install -e ".[dev]"`, no OPENAI_API_KEY, no .env.local -> smoke PASS + 312/312.
-- Raw output: `evidence/S20/check_outputs.txt`.
+- Unit: S22 (UI Polish: ElevenLabs-Style Minimal Monochrome Theme).
+- pytest: 312 passed / 0 failed / 0 errors / 0 skipped (junit XML; suite UNCHANGED - cosmetic-only unit, no page module touched; no key, PostgreSQL up). ruff check src tests scripts: All checks passed! Smoke test: PASS. `git diff --check`: clean.
+- Themed entry verified: AppTest over `app.py` (no exception; CSS block injected; global sidebar disclaimer visible); server restarted on :8501 -> HTTP 200, zero errors/warnings in the startup log.
+- Environment facts recorded: Streamlit 1.60 `theme.base` accepts only light/dark/theme-file (base="system" crashes with FileNotFoundError - observed, then fixed); `st.theme()` absent in 1.60; OS-following delegated to the browser's Light/Dark/System setting over the shipped dual palettes.
+- Scans: config.toml holds colors/radii only (no secrets; secrets.toml stays gitignored); zero new binaries; frozen artifacts untouched.
+- Honest limits: no screenshot tooling here - pixel-level visual acceptance (light AND dark) is the student's browser step.
+- Raw output: `evidence/S22/check_outputs.txt`.
 
 ## Decisions
 - Prepared-starter route; INIT must not be rerun.
@@ -90,7 +89,7 @@ Pre-unit checkpoint: 93ec99c.
 - S07 UI shell (see D013): multipage navigation with a global sidebar disclaimer on every page; Home landing with the frozen disclaimer; disclaimer on the trial results surface + safety_flags; empty states on all pages (AppTest-verified). No new analytics/AI; pre-existing trial/dashboard logic preserved for S13/S14.
 
 ## Next Unit Preparation
-S20 is ACCEPTED by the student 2026-09-17 (implementation completed the same day on top of checkpoint 93ec99c; no revisions requested). The manual desktop-Max load check remains available to the student any time: open evidence/S20/synthetic_patch_1ab48c73.maxpat (or a freshly generated patch from the page) in desktop Max, enable audio, flip the toggle; the patch auto-stops after the mapped bars. At the student's request, optional unit S21 (customizable wiring logic for the patch generator) is prepared at prompts/Session_21_Customizable_Wiring_Logic.md and DEFERRED - the student will kick it off "in the future sometime"; do NOT begin until the student explicitly says to start S21. The student runs the cloud go-live steps (DeploymentRunbook Parts C/D, Streamlit Community Cloud + Neon) in an offline session.
+S20 is ACCEPTED (2026-09-17) and S22 (UI polish, ElevenLabs-style theme) is IMPLEMENTED 2026-09-17 pending the student's acceptance - the manual step is a browser look at http://localhost:8501 in both light and dark (settings menu -> theme). S21 (customizable wiring logic) remains prepared at prompts/Session_21_Customizable_Wiring_Logic.md and DEFERRED until the student explicitly kicks it off. The student runs the cloud go-live steps (DeploymentRunbook Parts C/D, Streamlit Community Cloud + Neon) with the S22 deployment guide delivered in the stop-and-report; note the git push to origin must land first (the cloud builds from GitHub) - the push currently waits on the student's Cursor credential approval.
 ## Engineering Notes
 - [x] S18 deployment hardening (DONE locally 2026-08-30, D027; `src/ai_music_therapy/db.py` + `tests/test_connection_pool.py`, incl. multi-user simulated deployment test): replace fresh per-operation DB connections with a pooled connection manager before any concurrent multi-user Neon/PostgreSQL deployment. Order of work: (a) connection factory; (b) pooled engine / connection manager (e.g. psycopg_pool); (c) transaction wrapper; (d) retry + timeout handling; (e) deployment test with multiple simulated users. Local single-user demo use is acceptable as-is (D017 limitation).
 - [ ] Future control-doc edits: avoid literal matching on prose lines containing Unicode punctuation (em dashes etc.); use stable dash-free anchors, headings, IDs, regex, or structured markers instead.

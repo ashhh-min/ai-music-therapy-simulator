@@ -3,12 +3,18 @@ from __future__ import annotations
 import streamlit as st
 
 from ai_music_therapy.config import settings
+from ai_music_therapy.ui.theme_css import apply_theme
 
 st.set_page_config(
     page_title="AI Music Therapy - Simulation Lab",
     page_icon="🎵",
     layout="wide",
 )
+
+# S22: ElevenLabs-style minimal monochrome theme (cosmetic only; the light and
+# dark achromatic palettes live in .streamlit/config.toml and the browser's
+# Light/Dark/System setting picks one). Disclaimers/labels untouched.
+apply_theme()
 
 # Global disclaimer shown in the sidebar on every page.
 with st.sidebar:

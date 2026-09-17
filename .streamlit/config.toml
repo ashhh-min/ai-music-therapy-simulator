@@ -1,0 +1,36 @@
+# S22: ElevenLabs-style minimal monochrome theme (cosmetic only).
+# Streamlit 1.60 does not support base = "system" on the server, so the app
+# defaults to the light palette and ships BOTH achromatic palettes: the
+# browser follows the visitor's OS / settings-menu choice (Light, Dark, or
+# System) and Streamlit applies the matching [theme.light] / [theme.dark]
+# section automatically. This file is committable and ships to Streamlit
+# Community Cloud; secrets stay in .streamlit/secrets.toml, which is
+# gitignored and must never be committed.
+
+[theme]
+base = "light"
+baseRadius = "large"
+buttonRadius = "full"
+showWidgetBorder = true
+
+[theme.light]
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f5f5f5"
+textColor = "#141414"
+primaryColor = "#141414"
+borderColor = "#e4e4e7"
+
+[theme.light.sidebar]
+backgroundColor = "#fafafa"
+borderColor = "#e4e4e7"
+
+[theme.dark]
+backgroundColor = "#0a0a0a"
+secondaryBackgroundColor = "#161616"
+textColor = "#f2f2f2"
+primaryColor = "#f2f2f2"
+borderColor = "#2a2a2a"
+
+[theme.dark.sidebar]
+backgroundColor = "#0f0f0f"
+borderColor = "#2a2a2a"

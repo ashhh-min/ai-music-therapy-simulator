@@ -111,6 +111,17 @@ tests cover structural validity and determinism only. Max and Max/MSP are
 trademarks of Cycling '74; this project is not affiliated with or endorsed
 by Cycling '74. Opening a `.maxpat` requires a Max license or trial.
 
+## Look and feel (S22)
+
+Minimal monochrome theme (ElevenLabs-style): achromatic light and dark
+palettes, pill buttons, hairline borders, Inter/system-ui typography. Colors
+live in `.streamlit/config.toml` (`[theme.light]` / `[theme.dark]` - your
+browser's Light/Dark/System setting picks one; the app defaults to light);
+shapes and typography come from `src/ai_music_therapy/ui/theme_css.py`,
+injected once from `app.py`. Cosmetic only: disclaimers, labels, and claims
+are unchanged, and the config ships in the repo so cloud deployments inherit
+the theme.
+
 ## Deployment
 
 - Runbook (local, demo, Streamlit Community Cloud + Neon PostgreSQL):
