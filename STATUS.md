@@ -1,8 +1,8 @@
 # Project Status
 
 - Package state: Prepared starter, installed editable in a Python 3.13.14 `.venv`
-- Active control step: S20 IMPLEMENTED 2026-09-17, pending student acceptance - parameter-to-Max/MSP patch generation (the reversed S19 flow): one deterministic PatchSpec -> downloadable .maxpat + wiring diagram + local preview WAV; nothing persisted; hand-rolled generator, no py2max (D029); suite 312 green; Max-loadability is a manual student check (sample artifacts at evidence/S20/). S19 ACCEPTED 2026-09-06 (D028); cloud go-live remains the student's offline session
-- Next implementation unit: none; awaiting S20 acceptance (incl. the manual desktop-Max load check), then whatever the student requests next
+- Active control step: S20 ACCEPTED 2026-09-17 - parameter-to-Max/MSP patch generation (the reversed S19 flow): one deterministic PatchSpec -> downloadable .maxpat + wiring diagram + local preview WAV; nothing persisted; hand-rolled generator, no py2max (D029); suite 312 green; Max-loadability remains a manual student desktop check (sample artifacts at evidence/S20/). Optional S21 (customizable wiring logic) prepared and deferred until the student kicks it off; cloud go-live remains the student's offline session
+- Next implementation unit: none open; optional S21 (customizable wiring logic) prepared at prompts/Session_21_Customizable_Wiring_Logic.md - do NOT begin until the student explicitly says to start S21
 - Last accepted checkpoint: see `git log` (S07 + infra committed 2026-08-12; PostgreSQL switch committed 2026-08-19); prior accepted = c87c076 (S06)
 - Persistence: PostgreSQL 16 via `docker compose up -d` (Colima/QEMU local VM); repository on psycopg 3; re-seed with `python -m ai_music_therapy.seed_demo`
 - Deployment target (chosen 2026-08-19, D016): Streamlit Community Cloud + Neon PostgreSQL; hardening prerequisite DONE 2026-08-30 (D027: pooled connection manager, transaction wrapper, retry/timeout, 8-user simulated deployment test); manual guide at docs/DeploymentGuide_StreamlitCloud_Neon.md; cloud deployment not yet executed (requires student accounts)
