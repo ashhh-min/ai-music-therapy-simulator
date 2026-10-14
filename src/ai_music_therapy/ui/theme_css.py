@@ -17,7 +17,12 @@ import streamlit as st
 _CSS = """
 <style>
 /* ---------- typography: Inter-first system stack, tighter headings ---- */
-html, body, [class*="st-"] {
+/* Set on html/body ONLY (inheritance). A blanket [class*="st-"] rule would
+   tie Streamlit's own class-level font rules (equal specificity, earlier
+   sheet) and clobber them: Material-Symbols icon spans are ligature text
+   ("keyboard_arrow_right") that MUST keep the icon font, and code blocks
+   must stay monospace. Inheritance leaves both untouched. */
+html, body {
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
         system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -45,6 +50,17 @@ footer {visibility: hidden;}
 }
 .stButton > button:active, .stDownloadButton > button:active {
     transform: scale(0.985);
+}
+
+/* ---------- primary button label: legible in BOTH modes ----------------- */
+/* Streamlit paints primary-button labels white in both modes; over the dark
+   palette's near-white primaryColor that is invisible. light-dark() resolves
+   against the color-scheme Streamlit itself flips per applied palette, so
+   this follows the visitor's choice (including the in-app theme override)
+   without any prefers-color-scheme colors of our own. */
+[data-testid="stBaseButton-primary"] {
+    color: #ffffff;
+    color: light-dark(#ffffff, #0a0a0a);
 }
 
 /* ---------- cards / containers: soft rounding -------------------------- */
